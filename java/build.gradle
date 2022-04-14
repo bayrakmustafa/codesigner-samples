@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+mainClassName = 'com.ssl.codesigner.samples.HelloWorld'
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    baseName = 'HelloWorld'
+    version =  '0.0.1'
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+}

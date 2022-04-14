@@ -1,0 +1,71 @@
+on:
+  workflow_call:
+    secrets:
+      ES_USERNAME:
+        required: true
+      ES_PASSWORD:
+        required: true
+      CREDENTIAL_ID:
+        required: true
+      ES_TOTP_SECRET: 
+        required: true
+
+env:
+  PROJECT_NAME: HelloWorld
+  PROJECT_VERSION: 0.0.1
+  GRADLE_VERSION: 7.3
+  JAVA_VERSION: 17
+
+jobs:
+  codesigner-gradle:
+    runs-on: ubuntu-latest
+    name: Run CodeSigner Action on Java with Gradle
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: ${{env.JAVA_VERSION}}
+          
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: ${{env.GRADLE_VERSION}}
+
+      - name: Create Artifacts Directory
+        shell: bash
+        run: |
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+          mkdir ${GITHUB_WORKSPACE}/packages
+
+      - name: Compile Java Library with Gradle
+        shell: bash
+        run: |
+          gradle clean build -p java
+          cp java/build/libs/${{env.PROJECT_NAME}}-${{env.PROJECT_VERSION}}.jar ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.jar
+
+      - name: Sign Artifact with CodeSignTool
+        uses: bayrakmustafa/actions-codesigner@develop
+        with:
+          # Sign and timestamp code object.
+          command: sign
+          # SSL.com account username
+          username: ${{secrets.ES_USERNAME}}
+          # SSL.com account password.
+          password: ${{secrets.ES_PASSWORD}}
+          # Credential ID for signing certificate.
+          credential_id: ${{secrets.CREDENTIAL_ID}}
+          # OAuth TOTP Secret (https://www.ssl.com/how-to/automate-esigner-ev-code-signing)
+          totp_secret: ${{secrets.ES_TOTP_SECRET}}
+          # Path of code object to be signed. (DLL, EXE, JAR files vb... )
+          file_path: ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.jar
+          # Directory where signed code object(s) will be written.
+          output_path: ${GITHUB_WORKSPACE}/artifacts
+
+      - name: Upload Signed Files
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}-Gradle.jar
+          path: ./artifacts/${{env.PROJECT_NAME}}.jar
