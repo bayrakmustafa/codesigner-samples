@@ -1,3 +1,5 @@
+name: Sign Artifact with CodeSignTool
+
 on: [push]
 
 jobs:
