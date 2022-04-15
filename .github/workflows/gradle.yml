@@ -1,3 +1,7 @@
+# The name of the workflow.
+name: Java with Gradle Build and Sign
+
+# Trigger this workflow on a workflow_call
 on:
   workflow_call:
     secrets:
@@ -10,42 +14,53 @@ on:
       ES_TOTP_SECRET: 
         required: true
 
+# Create an environment variable
 env:
   PROJECT_NAME: HelloWorld
   PROJECT_VERSION: 0.0.1
   GRADLE_VERSION: 7.3
   JAVA_VERSION: 17
 
+# Defines a single job named "codesigner-gradle"
 jobs:
   codesigner-gradle:
+    # Run job on Ubuntu Runner
     runs-on: ubuntu-latest
+    # When the workflow runs, this is the name that is logged
     name: Run CodeSigner Action on Java with Gradle
     steps:
+      # 1) Check out the source code so that the workflow can access it.
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      # 2) Set up the Java environment for the workflow to use.
       - uses: actions/setup-java@v2
         with:
           distribution: zulu
           java-version: ${{env.JAVA_VERSION}}
-          
+
+      # 3) Set up the Gradle environment for the workflow to use.
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
 
+      # 4) Create Artifact Directory to store signed and unsigned artifact files
       - name: Create Artifacts Directory
         shell: bash
         run: |
           mkdir ${GITHUB_WORKSPACE}/artifacts
           mkdir ${GITHUB_WORKSPACE}/packages
 
-      - name: Compile Java Library with Gradle
+      # 5) Build a dotnet project or solution and all of its dependencies.
+      #    After it has been created jar file, copy to 'packages' folder for siging
+      - name: Compile Java Library with Maven
         shell: bash
         run: |
           gradle clean build -p java
           cp java/build/libs/${{env.PROJECT_NAME}}-${{env.PROJECT_VERSION}}.jar ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.jar
 
+      # 6) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
       - name: Sign Artifact with CodeSignTool
         uses: bayrakmustafa/actions-codesigner@develop
         with:
@@ -64,6 +79,7 @@ jobs:
           # Directory where signed code object(s) will be written.
           output_path: ${GITHUB_WORKSPACE}/artifacts
 
+        # 7) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - name: Upload Signed Files
         uses: actions/upload-artifact@v2
         with:
