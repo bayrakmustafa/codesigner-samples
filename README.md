@@ -411,7 +411,7 @@ jobs:
 ```
 <!-- end gradle usage -->
 
-## Java Code (Gradle) MSI Signing Example Workflow
+## Java Code (Gradle) EXE Signing Example Workflow
 
 <!-- start gradle usage -->
 ```yml
