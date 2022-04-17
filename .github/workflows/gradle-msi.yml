@@ -115,8 +115,8 @@ jobs:
           credential_id: ${{secrets.CREDENTIAL_ID}}
           # OAuth TOTP Secret (https://www.ssl.com/how-to/automate-esigner-ev-code-signing)
           totp_secret: ${{secrets.ES_TOTP_SECRET}}
-          # Path of code object to be signed. (DLL, EXE, JAR files vb... )
-          file_path: ${{env.PROJECT_NAME}}.msi
+          # Path of code object to be signed. (DLL, JAR, EXE, MSI files vb... )
+          file_path: ${GITHUB_WORKSPACE}/${{env.PROJECT_NAME}}.msi
           # Directory where signed code object(s) will be written.
           output_path: ${GITHUB_WORKSPACE}/artifacts
 
