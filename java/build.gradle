@@ -28,6 +28,7 @@ dependencies {
 }
 
 runtime {
+
     modules = ['java.desktop','java.naming','java.smartcardio','jdk.security.auth','jdk.crypto.ec','jdk.crypto.cryptoki']
     options = ['--strip-debug', '--compress', '1', '--no-header-files', '--no-man-pages']
 
@@ -58,5 +59,6 @@ runtime {
                 skipInstaller = false
             	installerOptions += ['--linux-menu-group', 'Office', '--linux-shortcut']
                 break;
+        }
     }
 }
