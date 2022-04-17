@@ -21,9 +21,9 @@ env:
   GRADLE_VERSION: 7.3
   JAVA_VERSION: 17
 
-# Defines a single job named "codesigner-gradle-msi"
 jobs:
-  codesigner-gradle-msi:
+  # Defines job named "build-gradle-msi"
+  build-gradle-msi:
     # Run job on Windows Runner
     runs-on: windows-latest
     # When the workflow runs, this is the name that is logged
@@ -73,7 +73,29 @@ jobs:
           gradle build jpackage -x test --warning-mode all -p java
           cp java/build/release/windows/*.msi ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.msi
 
-      # 8) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
+      # 8) Save the MSI file to the artifacts directory for codesigning tool
+      - name: Upload Setup File
+        id: upload-installer-windows
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}.msi
+          path: ./packages/${{env.PROJECT_NAME}}.msi
+
+  codesigner-msi:
+    # Codesigner job only work with linux runner
+    runs-on: ubuntu-latest
+    # After run this job building job finished
+    needs: [build-gradle-msi]
+    # When the workflow runs, this is the name that is logged
+    name: Run CodeSigner Action on MSI File
+    steps:
+        # 1) Download created msi file from Github Artifacts
+      - name: Download Windows Installer File
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}.msi
+
+        # 2) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
       - name: Sign Artifact with CodeSignTool
         uses: bayrakmustafa/actions-codesigner@develop
         with:
@@ -88,11 +110,11 @@ jobs:
           # OAuth TOTP Secret (https://www.ssl.com/how-to/automate-esigner-ev-code-signing)
           totp_secret: ${{secrets.ES_TOTP_SECRET}}
           # Path of code object to be signed. (DLL, EXE, JAR files vb... )
-          file_path: ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.msi
+          file_path: ${{env.PROJECT_NAME}}.msi
           # Directory where signed code object(s) will be written.
           output_path: ${GITHUB_WORKSPACE}/artifacts
 
-        # 9) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
+        # 3) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - name: Upload Signed Files
         uses: actions/upload-artifact@v2
         with:
