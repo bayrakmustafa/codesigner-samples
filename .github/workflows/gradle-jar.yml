@@ -27,7 +27,7 @@ jobs:
     # Run job on Ubuntu Runner
     runs-on: ubuntu-latest
     # When the workflow runs, this is the name that is logged
-    name: Run CodeSigner Action on Java with Gradle
+    name: CodeSigner on Java with Gradle
     steps:
       # 1) Check out the source code so that the workflow can access it.
       - name: Checkout Repository

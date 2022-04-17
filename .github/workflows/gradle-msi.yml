@@ -27,7 +27,7 @@ jobs:
     # Run job on Windows Runner
     runs-on: windows-latest
     # When the workflow runs, this is the name that is logged
-    name: Run CodeSigner Action on Java with Gradle
+    name: Build MSI File with Gradle
     steps:
       # 1) Check out the source code so that the workflow can access it.
       - name: Checkout Repository
@@ -89,13 +89,19 @@ jobs:
     # When the workflow runs, this is the name that is logged
     name: Run CodeSigner Action on MSI File
     steps:
-        # 1) Download created msi file from Github Artifacts
+      # 1) Download created msi file from Github Artifacts
       - name: Download Windows Installer File
         uses: actions/download-artifact@v2
         with:
           name: ${{env.PROJECT_NAME}}.msi
 
-        # 2) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
+      # 2) Create Artifact Directory to store signed and unsigned artifact files
+      - name: Create Artifacts Directory
+        shell: bash
+        run: |
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+
+      # 3) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
       - name: Sign Artifact with CodeSignTool
         uses: bayrakmustafa/actions-codesigner@develop
         with:
@@ -114,7 +120,7 @@ jobs:
           # Directory where signed code object(s) will be written.
           output_path: ${GITHUB_WORKSPACE}/artifacts
 
-        # 3) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
+      # 4) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - name: Upload Signed Files
         uses: actions/upload-artifact@v2
         with:
