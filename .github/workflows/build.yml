@@ -1,4 +1,4 @@
-name: Sign Artifact with CodeSignTool
+name: CodeSignTool on Github Action
 
 on: [push]
 
