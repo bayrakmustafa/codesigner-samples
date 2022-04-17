@@ -54,7 +54,7 @@ jobs:
 
       # 5) Build a dotnet project or solution and all of its dependencies.
       #    After it has been created jar file, copy to 'packages' folder for siging
-      - name: Compile Java Library with Maven
+      - name: Compile Java Library with Gradle
         shell: bash
         run: |
           gradle clean build -p java

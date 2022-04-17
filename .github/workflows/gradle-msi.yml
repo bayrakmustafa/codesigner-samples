@@ -47,7 +47,6 @@ jobs:
 
       # 4) Install WIX for MSI Setup File
       - name: Windows Specific Setup
-        if: matrix.os == 'windows-latest'
         run: |
           curl -OLS https://github.com/wixtoolset/wix3/releases/download/wix3111rtm/wix311.exe
           .\wix311.exe /install /quiet /norestart
@@ -55,7 +54,6 @@ jobs:
       # 5) Add WIX to environment variable
       - name: Add path to PATH environment variable
         uses: myci-actions/export-env-var-powershell@1
-        if: matrix.os == 'windows-latest'
         with:
           name: PATH
           value: $env:PATH;C:\Program Files (x86)\WiX Toolset v3.11\bin
@@ -69,7 +67,7 @@ jobs:
 
       # 7) Build a dotnet project or solution and all of its dependencies.
       #    After it has been created jar file, copy to 'packages' folder for siging
-      - name: Compile Java Library with Maven
+      - name: Compile Java Library with Gradle
         shell: bash
         run: |
           gradle build jpackage -x test --warning-mode all -p java
