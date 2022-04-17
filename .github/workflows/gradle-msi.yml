@@ -70,7 +70,7 @@ jobs:
       - name: Compile Java Library with Gradle
         shell: bash
         run: |
-          gradle build jpackage -x test --warning-mode all -p java
+          gradle build jpackage -x test --warning-mode all -p java -PsetupType=msi
           cp java/build/release/windows/*.msi ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.msi
 
       # 8) Save the MSI file to the artifacts directory for codesigning tool
@@ -81,6 +81,7 @@ jobs:
           name: ${{env.PROJECT_NAME}}.msi
           path: ./packages/${{env.PROJECT_NAME}}.msi
 
+  # Defines job named "codesigner-msi"
   codesigner-msi:
     # Codesigner job only work with linux runner
     runs-on: ubuntu-latest

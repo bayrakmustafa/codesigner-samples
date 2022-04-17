@@ -34,17 +34,21 @@ runtime {
 
     jpackage {
 
-        appVersion = '1.0.0'
+        appVersion = '0.0.1'
         installerName = ''
         imageName = ''
         description = ''
+
+        if (project.hasProperty("setupType")) {
+            args Eval.me(setupType)
+        }
 
         installerOptions += ['--copyright','(C) SSL.com 2022-2022', '--vendor','SSL.com']
 
         switch (OperatingSystem.current()) {
 			case OperatingSystem.WINDOWS:
                 outputDir = 'release/windows'
-                installerType = 'msi'
+                installerType = setupType
                 skipInstaller = false
                 installerOptions += ['--win-menu', '--win-shortcut', '--win-dir-chooser','--win-upgrade-uuid','176e5402-095b-11eb-adc1-0242ac120002']
                 break;
