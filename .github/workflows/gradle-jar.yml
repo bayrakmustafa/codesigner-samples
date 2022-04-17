@@ -57,7 +57,7 @@ jobs:
       - name: Compile Java Library with Gradle
         shell: bash
         run: |
-          gradle clean build -p java
+          gradle clean build -p java -PsetupType=jar
           cp java/build/libs/${{env.PROJECT_NAME}}-${{env.PROJECT_VERSION}}.jar ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.jar
 
       # 6) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
