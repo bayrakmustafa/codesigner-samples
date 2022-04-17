@@ -1,5 +1,5 @@
 # The name of the workflow.
-name: Java with Maven Build and Sign
+name: (JAR) Maven Build and Sign
 
 # Trigger this workflow on a workflow_call
 on:

@@ -1,5 +1,5 @@
 # The name of the workflow.
-name: Java with Gradle Build and Sign
+name: (MSI) Gradle Build and Sign
 
 # Trigger this workflow on a workflow_call
 on:

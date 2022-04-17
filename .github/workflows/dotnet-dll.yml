@@ -1,5 +1,5 @@
 # The name of the workflow.
-name: Dotnet Core Build and Sign
+name: (DLL) Dotnet Core Build and Sign
 
 # Trigger this workflow on a workflow_call
 on:
