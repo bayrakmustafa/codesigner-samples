@@ -165,7 +165,7 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/artifacts
           mkdir ${GITHUB_WORKSPACE}/packages
 
-      # 4) Build a dotnet project or solution and all of its dependencies.
+      # 4) Build a maven project or solution and all of its dependencies.
       #    After it has been created jar file, copy to 'packages' folder for siging
       - name: Compile Java Library with Maven
         shell: bash
@@ -249,7 +249,7 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/artifacts
           mkdir ${GITHUB_WORKSPACE}/packages
 
-      # 5) Build a dotnet project or solution and all of its dependencies.
+      # 5) Build a gradle project or solution and all of its dependencies.
       #    After it has been created jar file, copy to 'packages' folder for siging
       - name: Compile Java Library with Gradle
         shell: bash
@@ -346,7 +346,7 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/artifacts
           mkdir ${GITHUB_WORKSPACE}/packages
 
-      # 7) Build a dotnet project or solution and all of its dependencies.
+      # 7) Build a gradle project or solution and all of its dependencies.
       #    After it has been created jar file, copy to 'packages' folder for siging
       - name: Compile Java Library with Gradle
         shell: bash
@@ -472,7 +472,7 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/artifacts
           mkdir ${GITHUB_WORKSPACE}/packages
 
-      # 7) Build a dotnet project or solution and all of its dependencies.
+      # 7) Build a gradle project or solution and all of its dependencies.
       #    After it has been created jar file, copy to 'packages' folder for siging
       - name: Compile Java Library with Gradle
         shell: bash

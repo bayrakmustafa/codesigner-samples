@@ -65,7 +65,7 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/artifacts
           mkdir ${GITHUB_WORKSPACE}/packages
 
-      # 7) Build a dotnet project or solution and all of its dependencies.
+      # 7) Build a gradle project or solution and all of its dependencies.
       #    After it has been created jar file, copy to 'packages' folder for siging
       - name: Compile Java Library with Gradle
         shell: bash
