@@ -14,8 +14,8 @@ repositories {
 }
 
 jar {
-    baseName = 'HelloWorld'
-    version =  '0.0.1'
+    archiveBaseName = 'HelloWorld'
+    archiveVersion =  '0.0.1'
     manifest {
         attributes 'Main-Class': mainClassName
     }
@@ -39,10 +39,7 @@ runtime {
         imageName = ''
         description = ''
 
-        if (project.hasProperty("setupType")) {
-            args Eval.me(setupType)
-        }
-
+        setupType = project.properties["setupType"]
         installerOptions += ['--copyright','(C) SSL.com 2022-2022', '--vendor','SSL.com']
 
         switch (OperatingSystem.current()) {
