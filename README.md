@@ -50,7 +50,7 @@ This action provides the sign artifacts from your build.
 <!-- start dotnet usage -->
 ```yml
 # The name of the workflow.
-name: Dotnet Core Build and Sign
+name: (DLL) Dotnet Core Build and Sign
 
 # Trigger this workflow on a push
 on: push
@@ -127,7 +127,7 @@ jobs:
 <!-- start maven usage -->
 ```yml
 # The name of the workflow.
-name: Java with Maven Build and Sign
+name: (JAR) Maven Build and Sign
 
 # Trigger this workflow on a push
 on: push
@@ -206,7 +206,7 @@ jobs:
 <!-- start gradle usage -->
 ```yml
 # The name of the workflow.
-name: Java with Gradle Build and Sign
+name: (JAR) Gradle Build and Sign
 
 # Trigger this workflow on a push
 on: push
@@ -290,7 +290,7 @@ jobs:
 <!-- start gradle usage -->
 ```yml
 # The name of the workflow.
-name: Java with Gradle Build and Sign
+name: (MSI) Gradle Build and Sign
 
 # Trigger this workflow on a push
 on: push
@@ -416,7 +416,7 @@ jobs:
 <!-- start gradle usage -->
 ```yml
 # The name of the workflow.
-name: Java with Gradle Build and Sign
+name: (EXE) Gradle Build and Sign
 
 # Trigger this workflow on a push
 on: push
