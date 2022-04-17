@@ -45,7 +45,7 @@ This action provides the sign artifacts from your build.
 ```
 <!-- end usage -->
 
-## Dotnet Code Signing Example Workflow
+## Dotnet Code DLL Signing Example Workflow
 
 <!-- start dotnet usage -->
 ```yml
@@ -61,13 +61,13 @@ env:
   PROJECT_VERSION: 0.0.1
   DOTNET_VERSION: 3.1
 
-# Defines a single job named "codesigner-dotnet"
+# Defines a single job named "codesigner-dotnet-dll"
 jobs:
-  codesigner-dotnet:
+  codesigner-dotnet-dll:
     # Run job on Ubuntu Runner
     runs-on: ubuntu-latest
     # When the workflow runs, this is the name that is logged
-    name: Run CodeSigner Action on Dotnet
+    name: CodeSigner on Dotnet
     steps:
       # 1) Check out the source code so that the workflow can access it.
       - name: Checkout Repository
@@ -122,7 +122,7 @@ jobs:
 ```
 <!-- end dotnet usage -->
 
-## Java Code (Maven) Signing Example Workflow
+## Java Code (Maven) JAR Signing Example Workflow
 
 <!-- start maven usage -->
 ```yml
@@ -139,13 +139,13 @@ env:
   MAVEN_VERSION: 3.8.5
   JAVA_VERSION: 17
 
-# Defines a single job named "codesigner-maven"
+# Defines a single job named "codesigner-maven-jar"
 jobs:
-  codesigner-maven:
+  codesigner-maven-jar:
     # Run job on Ubuntu Runner
     runs-on: ubuntu-latest
     # When the workflow runs, this is the name that is logged
-    name: Run CodeSigner Action on Java with Maven
+    name: CodeSigner on Java with Maven
     steps:
       # 1) Check out the source code so that the workflow can access it.
       - name: Checkout Repository
@@ -201,7 +201,7 @@ jobs:
 ```
 <!-- end maven usage -->
 
-## Java Code (Gradle) Signing Example Workflow
+## Java Code (Gradle) JAR Signing Example Workflow
 
 <!-- start gradle usage -->
 ```yml
@@ -218,13 +218,13 @@ env:
   GRADLE_VERSION: 7.3
   JAVA_VERSION: 17
 
-# Defines a single job named "codesigner-gradle"
+# Defines a single job named "codesigner-gradle-jar"
 jobs:
-  codesigner-gradle:
+  codesigner-gradle-jar:
     # Run job on Ubuntu Runner
     runs-on: ubuntu-latest
     # When the workflow runs, this is the name that is logged
-    name: Run CodeSigner Action on Java with Gradle
+    name: CodeSigner on Java with Gradle
     steps:
       # 1) Check out the source code so that the workflow can access it.
       - name: Checkout Repository
@@ -251,10 +251,10 @@ jobs:
 
       # 5) Build a dotnet project or solution and all of its dependencies.
       #    After it has been created jar file, copy to 'packages' folder for siging
-      - name: Compile Java Library with Maven
+      - name: Compile Java Library with Gradle
         shell: bash
         run: |
-          gradle clean build -p java
+          gradle clean build -p java -PsetupType=jar
           cp java/build/libs/${{env.PROJECT_NAME}}-${{env.PROJECT_VERSION}}.jar ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.jar
 
       # 6) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
@@ -282,6 +282,258 @@ jobs:
         with:
           name: ${{env.PROJECT_NAME}}.jar
           path: ./artifacts/${{env.PROJECT_NAME}}.jar
+```
+<!-- end gradle usage -->
+
+## Java Code (Gradle) MSI Signing Example Workflow
+
+<!-- start gradle usage -->
+```yml
+# The name of the workflow.
+name: Java with Gradle Build and Sign
+
+# Trigger this workflow on a push
+on: push
+
+# Create an environment variable
+env:
+  PROJECT_NAME: HelloWorld
+  PROJECT_VERSION: 0.0.1
+  GRADLE_VERSION: 7.3
+  JAVA_VERSION: 17
+
+jobs:
+  # Defines job named "build-gradle-msi"
+  build-gradle-msi:
+    # Run job on Windows Runner
+    runs-on: windows-latest
+    # When the workflow runs, this is the name that is logged
+    name: Build MSI File with Gradle
+    steps:
+      # 1) Check out the source code so that the workflow can access it.
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # 2) Set up the Java environment for the workflow to use.
+      - uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: ${{env.JAVA_VERSION}}
+
+      # 3) Set up the Gradle environment for the workflow to use.
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: ${{env.GRADLE_VERSION}}
+
+      # 4) Install WIX for MSI Setup File
+      - name: Windows Specific Setup
+        run: |
+          curl -OLS https://github.com/wixtoolset/wix3/releases/download/wix3111rtm/wix311.exe
+          .\wix311.exe /install /quiet /norestart
+
+      # 5) Add WIX to environment variable
+      - name: Add path to PATH environment variable
+        uses: myci-actions/export-env-var-powershell@1
+        with:
+          name: PATH
+          value: $env:PATH;C:\Program Files (x86)\WiX Toolset v3.11\bin
+
+      # 6) Create Artifact Directory to store signed and unsigned artifact files
+      - name: Create Artifacts Directory
+        shell: bash
+        run: |
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+          mkdir ${GITHUB_WORKSPACE}/packages
+
+      # 7) Build a dotnet project or solution and all of its dependencies.
+      #    After it has been created jar file, copy to 'packages' folder for siging
+      - name: Compile Java Library with Gradle
+        shell: bash
+        run: |
+          gradle build jpackage -x test --warning-mode all -p java -PsetupType=msi
+          cp java/build/release/windows/*.msi ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.msi
+
+      # 8) Save the MSI file to the artifacts directory for codesigning tool
+      - name: Upload Setup File
+        id: upload-installer-windows
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}.msi
+          path: ./packages/${{env.PROJECT_NAME}}.msi
+
+  # Defines job named "codesigner-msi"
+  codesigner-msi:
+    # Codesigner job only work with linux runner
+    runs-on: ubuntu-latest
+    # After run this job building job finished
+    needs: [build-gradle-msi]
+    # When the workflow runs, this is the name that is logged
+    name: CodeSigner on MSI File
+    steps:
+      # 1) Download created msi file from Github Artifacts
+      - name: Download Windows Installer File
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}.msi
+
+      # 2) Create Artifact Directory to store signed and unsigned artifact files
+      - name: Create Artifacts Directory
+        shell: bash
+        run: |
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+
+      # 3) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
+      - name: Sign Artifact with CodeSignTool
+        uses: bayrakmustafa/actions-codesigner@develop
+        with:
+          # Sign and timestamp code object.
+          command: sign
+          # SSL.com account username
+          username: ${{secrets.ES_USERNAME}}
+          # SSL.com account password.
+          password: ${{secrets.ES_PASSWORD}}
+          # Credential ID for signing certificate.
+          credential_id: ${{secrets.CREDENTIAL_ID}}
+          # OAuth TOTP Secret (https://www.ssl.com/how-to/automate-esigner-ev-code-signing)
+          totp_secret: ${{secrets.ES_TOTP_SECRET}}
+          # Path of code object to be signed. (DLL, JAR, EXE, MSI files vb... )
+          file_path: ${GITHUB_WORKSPACE}/${{env.PROJECT_NAME}}.msi
+          # Directory where signed code object(s) will be written.
+          output_path: ${GITHUB_WORKSPACE}/artifacts
+
+      # 4) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
+      - name: Upload Signed Files
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}.msi
+          path: ./artifacts/${{env.PROJECT_NAME}}.msi
+```
+<!-- end gradle usage -->
+
+## Java Code (Gradle) MSI Signing Example Workflow
+
+<!-- start gradle usage -->
+```yml
+# The name of the workflow.
+name: Java with Gradle Build and Sign
+
+# Trigger this workflow on a push
+on: push
+
+# Create an environment variable
+env:
+  PROJECT_NAME: HelloWorld
+  PROJECT_VERSION: 0.0.1
+  GRADLE_VERSION: 7.3
+  JAVA_VERSION: 17
+
+jobs:
+  # Defines job named "build-gradle-exe"
+  build-gradle-exe:
+    # Run job on Windows Runner
+    runs-on: windows-latest
+    # When the workflow runs, this is the name that is logged
+    name: Build exe File with Gradle
+    steps:
+      # 1) Check out the source code so that the workflow can access it.
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # 2) Set up the Java environment for the workflow to use.
+      - uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: ${{env.JAVA_VERSION}}
+
+      # 3) Set up the Gradle environment for the workflow to use.
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: ${{env.GRADLE_VERSION}}
+
+      # 4) Install WIX for exe Setup File
+      - name: Windows Specific Setup
+        run: |
+          curl -OLS https://github.com/wixtoolset/wix3/releases/download/wix3111rtm/wix311.exe
+          .\wix311.exe /install /quiet /norestart
+
+      # 5) Add WIX to environment variable
+      - name: Add path to PATH environment variable
+        uses: myci-actions/export-env-var-powershell@1
+        with:
+          name: PATH
+          value: $env:PATH;C:\Program Files (x86)\WiX Toolset v3.11\bin
+
+      # 6) Create Artifact Directory to store signed and unsigned artifact files
+      - name: Create Artifacts Directory
+        shell: bash
+        run: |
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+          mkdir ${GITHUB_WORKSPACE}/packages
+
+      # 7) Build a dotnet project or solution and all of its dependencies.
+      #    After it has been created jar file, copy to 'packages' folder for siging
+      - name: Compile Java Library with Gradle
+        shell: bash
+        run: |
+          gradle build jpackage -x test --warning-mode all -p java -PsetupType=exe
+          cp java/build/release/windows/*.exe ${GITHUB_WORKSPACE}/packages/${{env.PROJECT_NAME}}.exe
+
+      # 8) Save the exe file to the artifacts directory for codesigning tool
+      - name: Upload Setup File
+        id: upload-installer-windows
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}.exe
+          path: ./packages/${{env.PROJECT_NAME}}.exe
+
+  # Defines job named "codesigner-exe"
+  codesigner-exe:
+    # Codesigner job only work with linux runner
+    runs-on: ubuntu-latest
+    # After run this job building job finished
+    needs: [build-gradle-exe]
+    # When the workflow runs, this is the name that is logged
+    name: CodeSigner on exe File
+    steps:
+      # 1) Download created exe file from Github Artifacts
+      - name: Download Windows Installer File
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}.exe
+
+      # 2) Create Artifact Directory to store signed and unsigned artifact files
+      - name: Create Artifacts Directory
+        shell: bash
+        run: |
+          mkdir ${GITHUB_WORKSPACE}/artifacts
+
+      # 3) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
+      - name: Sign Artifact with CodeSignTool
+        uses: bayrakmustafa/actions-codesigner@develop
+        with:
+          # Sign and timestamp code object.
+          command: sign
+          # SSL.com account username
+          username: ${{secrets.ES_USERNAME}}
+          # SSL.com account password.
+          password: ${{secrets.ES_PASSWORD}}
+          # Credential ID for signing certificate.
+          credential_id: ${{secrets.CREDENTIAL_ID}}
+          # OAuth TOTP Secret (https://www.ssl.com/how-to/automate-esigner-ev-code-signing)
+          totp_secret: ${{secrets.ES_TOTP_SECRET}}
+          # Path of code object to be signed. (DLL, JAR, EXE, exe files vb... )
+          file_path: ${GITHUB_WORKSPACE}/${{env.PROJECT_NAME}}.exe
+          # Directory where signed code object(s) will be written.
+          output_path: ${GITHUB_WORKSPACE}/artifacts
+
+      # 4) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
+      - name: Upload Signed Files
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.PROJECT_NAME}}.exe
+          path: ./artifacts/${{env.PROJECT_NAME}}.exe
 ```
 <!-- end gradle usage -->
 
