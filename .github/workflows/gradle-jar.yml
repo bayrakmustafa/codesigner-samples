@@ -21,9 +21,9 @@ env:
   GRADLE_VERSION: 7.3
   JAVA_VERSION: 17
 
-# Defines a single job named "codesigner-gradle"
+# Defines a single job named "codesigner-gradle-jar"
 jobs:
-  codesigner-gradle:
+  codesigner-gradle-jar:
     # Run job on Ubuntu Runner
     runs-on: ubuntu-latest
     # When the workflow runs, this is the name that is logged

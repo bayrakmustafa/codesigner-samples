@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'application'
@@ -20,4 +22,38 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+}
+
+runtime {
+    modules = ['java.desktop','java.naming','java.smartcardio','jdk.security.auth','jdk.crypto.ec','jdk.crypto.cryptoki']
+    options = ['--strip-debug', '--compress', '1', '--no-header-files', '--no-man-pages']
+
+    jpackage {
+
+        appVersion = '1.0.0'
+        installerName = ''
+        imageName = ''
+        description = ''
+
+        installerOptions += ['--copyright','(C) SSL.com 2022-2022', '--vendor','SSL.com']
+
+        switch (OperatingSystem.current()) {
+			case OperatingSystem.WINDOWS:
+                outputDir = 'release/windows'
+                installerType = 'msi'
+                skipInstaller = false
+                installerOptions += ['--win-menu', '--win-shortcut', '--win-dir-chooser','--win-upgrade-uuid','176e5402-095b-11eb-adc1-0242ac120002']
+                break;
+			case OperatingSystem.MAC_OS:
+                outputDir = 'release/macos'
+                installerType = 'dmg'
+                skipInstaller = false
+                break;
+			case OperatingSystem.LINUX:
+                outputDir = 'release/linux'
+                installerType = 'deb'
+                skipInstaller = false
+            	installerOptions += ['--linux-menu-group', 'Office', '--linux-shortcut']
+                break;
+    }
 }
