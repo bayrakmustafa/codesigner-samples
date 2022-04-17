@@ -87,7 +87,7 @@ jobs:
     # After run this job building job finished
     needs: [build-gradle-msi]
     # When the workflow runs, this is the name that is logged
-    name: Run CodeSigner Action on MSI File
+    name: CodeSigner on MSI File
     steps:
       # 1) Download created msi file from Github Artifacts
       - name: Download Windows Installer File
