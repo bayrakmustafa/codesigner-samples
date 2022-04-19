@@ -55,7 +55,7 @@ jobs:
           # Directory where signed code object(s) will be written.
           output_path: ${GITHUB_WORKSPACE}/artifacts
 
-        # 6) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
+        # 4) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - name: Upload Signed Files
         uses: actions/upload-artifact@v2
         with:

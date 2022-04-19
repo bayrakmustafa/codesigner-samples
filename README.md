@@ -4,7 +4,7 @@
 
 CodeSignTool is a secure, privacy-oriented multi-platform Java command line utility for remotely signing Microsoft Authenticode and Java code objects with eSigner EV code signing certificates. Hashes of the files are sent to SSL.com for signing so that the code itself is not sent. This is ideal where sensitive files need to be signed, but should not be sent over the wire for signing. CodeSignTool is also ideal for automated batch processes for high volume signings or integration into existing CI/CD pipeline workflows.
 
-This action provides the sign artifacts from your build.
+This action provides the sign artifacts.
 
 # Usage
 
@@ -585,7 +585,7 @@ jobs:
           # Directory where signed code object(s) will be written.
           output_path: ${GITHUB_WORKSPACE}/artifacts
 
-        # 6) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
+        # 4) This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - name: Upload Signed Files
         uses: actions/upload-artifact@v2
         with:
@@ -597,3 +597,4 @@ jobs:
 # CodeSignTool Guide
 
 * https://www.ssl.com/guide/esigner-codesigntool-command-guide
+* https://www.ssl.com/guide/remote-ev-code-signing-with-esigner/
