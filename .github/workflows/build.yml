@@ -1,4 +1,4 @@
-name: CodeSignTool on Github Action
+name: CodeSignTool
 
 on: [push]
 
