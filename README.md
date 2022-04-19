@@ -6,22 +6,6 @@ CodeSignTool is a secure, privacy-oriented multi-platform Java command line util
 
 This action provides the sign artifacts with CodeSignTool.
 
-### Inputs
-
-#### `username`: SSL.com account username (**Required**)
-
-#### `password`: SSL.com account password (**Required**)
-
-#### `credential_id`: Credential ID for signing certificate. If credential_id is omitted and the user has only one eSigner code signing certificate, CodeSignTool will default to that. If the user has more than one code signing certificate, this parameter is mandatory.
-
-#### `totp_secret`: OAuth TOTP Secret. You can access detailed information on https://www.ssl.com/how-to/automate-esigner-ev-code-signing (**Required**)
-
-#### `file_path`: Path of code object to be signed. (**Required**)
-
-#### `output_path`: Directory where signed code object(s) will be written. If output_path is omitted, the file specified in -file_path will be overwritten with the signed file. (**Required**)
-
-<br/>
-
 # Usage
 
 <!-- start usage -->
@@ -58,6 +42,22 @@ This action provides the sign artifacts with CodeSignTool.
     output_path: ${GITHUB_WORKSPACE}/artifacts
 ```
 <!-- end usage -->
+
+### Inputs
+
+* `username`: SSL.com account username (**Required**)
+
+* `password`: SSL.com account password (**Required**)
+
+* `credential_id`: Credential ID for signing certificate. If credential_id is omitted and the user has only one eSigner code signing certificate, CodeSignTool will default to that. If the user has more than one code signing certificate, this parameter is mandatory.
+
+* `totp_secret`: OAuth TOTP Secret. You can access detailed information on https://www.ssl.com/how-to/automate-esigner-ev-code-signing (**Required**)
+
+* `file_path`: Path of code object to be signed. (**Required**)
+
+* `output_path`: Directory where signed code object(s) will be written. If output_path is omitted, the file specified in -file_path will be overwritten with the signed file.
+
+<br/>
 
 ## Dotnet Code DLL Signing Example Workflow
 
