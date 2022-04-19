@@ -57,8 +57,6 @@ This action provides the sign artifacts with CodeSignTool.
 
 * `output_path`: Directory where signed code object(s) will be written. If output_path is omitted, the file specified in -file_path will be overwritten with the signed file.
 
-<br/>
-
 ## Dotnet Code DLL Signing Example Workflow
 
 <!-- start dotnet usage -->
