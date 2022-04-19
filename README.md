@@ -35,6 +35,7 @@ This action provides the sign artifacts.
     totp_secret: ${{secrets.ES_TOTP_SECRET}}
 
     # Path of code object to be signed.
+    # Supported File Types: acm, ax, bin, cab, cpl, dll, drv, efi, exe, mui, ocx, scr, sys, tsp, msi, ps1, ps1xml, js, vbs, wsf, jar
     file_path: ${GITHUB_WORKSPACE}/test/src/build/HelloWorld.jar
 
     # Directory where signed code object(s) will be written.
@@ -363,7 +364,7 @@ jobs:
   codesigner-msi:
     # Codesigner job only work with linux runner
     runs-on: ubuntu-latest
-    # After run this job building job finished
+    # Run this job after build-gradle-msi job is finished
     needs: [build-gradle-msi]
     # When the workflow runs, this is the name that is logged
     name: CodeSigner on MSI File
@@ -489,7 +490,7 @@ jobs:
   codesigner-exe:
     # Codesigner job only work with linux runner
     runs-on: ubuntu-latest
-    # After run this job building job finished
+    # Run this job after build-gradle-exe job is finished
     needs: [build-gradle-exe]
     # When the workflow runs, this is the name that is logged
     name: CodeSigner on exe File
