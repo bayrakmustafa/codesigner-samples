@@ -32,7 +32,7 @@ pipeline {
             }
             post {
                 always {
-                    archiveArtifacts artifacts: "${env.WORKSPACE}/artifacts/codesign.ps1", onlyIfSuccessful: true
+                    archiveArtifacts artifacts: "./artifacts/codesign.ps1", onlyIfSuccessful: true
                 }
             }
         }
