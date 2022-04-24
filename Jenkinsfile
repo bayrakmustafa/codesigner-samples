@@ -8,7 +8,7 @@ pipeline {
     environment {
         ENV_FILE       = credentials('es-env-demo')
         GITHUB_TOKEN   = credentials('es-github-token')
-        COMMAND        = sign
+        COMMAND        = 'sign'
     }
 
     stages {    
@@ -20,8 +20,10 @@ pipeline {
         }
 
         stage('Docker Pull Image') {
-            sh "echo ${GITHUB_TOKEN} | docker login ghcr.io -u bayrakmustafa --password-stdin"
-            sh 'docker pull ghcr.io/bayrakmustafa/codesigner:latest'
+            steps {
+                sh "echo ${GITHUB_TOKEN} | docker login ghcr.io -u bayrakmustafa --password-stdin"
+                sh 'docker pull ghcr.io/bayrakmustafa/codesigner:latest'
+            }
         }
 
         stage('Sign and Save Artifact') {
