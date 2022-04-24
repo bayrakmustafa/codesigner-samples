@@ -1,8 +1,15 @@
 pipeline {
     agent any
+
     options {
         buildDiscarder(logRotator(numToKeepStr: "5"))
         disableConcurrentBuilds()
+    }
+
+    tools {
+        maven "MAVEN_3.8.5"
+        jdk "JDK_9.0.4"
+        gradle "GRADLE_7.4.2"
     }
 
     environment {
@@ -14,6 +21,11 @@ pipeline {
         GITHUB_TOKEN     = credentials('es-github-token')
         ENVIRONMENT_NAME = 'TEST'
         COMMAND          = 'sign'
+
+        PROJECT_NAME: HelloWorld
+        PROJECT_VERSION: 0.0.1
+        MAVEN_VERSION: 3.8.5
+        JAVA_VERSION: 9.0.4
     }
 
     stages {    
@@ -21,6 +33,7 @@ pipeline {
             steps {
                 sh "cp ${ENV_FILE} .env"
                 sh "mkdir ${env.WORKSPACE}/artifacts"
+                sh "mkdir ${env.WORKSPACE}/packages"
             }
         }
 
@@ -28,6 +41,23 @@ pipeline {
             steps {
                 sh "echo ${GITHUB_TOKEN} | docker login ghcr.io -u bayrakmustafa --password-stdin"
                 sh 'docker pull ghcr.io/bayrakmustafa/codesigner:latest'
+            }
+        }
+
+        stage('Build Packages') {
+            parallel {
+                stage('Build Maven') {
+                    steps {
+                        maven 'clean install -f java/pom.xml'
+                        sh "cp java/target/${{env.PROJECT_NAME}}-${{env.PROJECT_VERSION}}.jar ${env.WORKSPACE}/packages/${{env.PROJECT_NAME}}.jar"
+                    }
+                }
+                stage('Build Gradle') {
+                    steps {
+                        gradle 'clean build -p java -PsetupType=jar'
+                        sh "cp java/build/libs/${{env.PROJECT_NAME}}-${{env.PROJECT_VERSION}}.jar ${env.WORKSPACE}/packages/${{env.PROJECT_NAME}}.jar"
+                    }
+                }
             }
         }
 
