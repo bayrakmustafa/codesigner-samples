@@ -22,10 +22,10 @@ pipeline {
         ENVIRONMENT_NAME = 'TEST'
         COMMAND          = 'sign'
 
-        PROJECT_NAME: HelloWorld
-        PROJECT_VERSION: 0.0.1
-        MAVEN_VERSION: 3.8.5
-        JAVA_VERSION: 9.0.4
+        PROJECT_NAME     = 'HelloWorld'
+        PROJECT_VERSION  = '0.0.1'
+        MAVEN_VERSION    = '3.8.5'
+        JAVA_VERSION     = '9.0.4'
     }
 
     stages {    
