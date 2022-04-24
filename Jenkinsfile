@@ -6,9 +6,14 @@ pipeline {
     }
 
     environment {
-        ENV_FILE       = credentials('es-env-demo')
-        GITHUB_TOKEN   = credentials('es-github-token')
-        COMMAND        = 'sign'
+        ENV_FILE         = credentials('es-env-demo')
+        USERNAME         = credentials('es-username')
+        password         = credentials('es-password')
+        CREDENTIAL_ID    = credentials('es-credantial-id')
+        TOTP_SECRET      = credentials('es-totp-secret')
+        GITHUB_TOKEN     = credentials('es-github-token')
+        ENVIRONMENT_NAME = 'TEST'
+        COMMAND          = 'sign'
     }
 
     stages {    
@@ -28,7 +33,10 @@ pipeline {
 
         stage('Sign and Save Artifact') {
             steps {
-                sh "docker run -i --rm --dns 8.8.8.8 --network host --volume ${env.WORKSPACE}/artifacts:/codesign/output --env-file .env ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/codesign.ps1 -output_dir_path=/codesign/output"
+                sh "docker run -i --rm --dns 8.8.8.8 --network host --volume ${env.WORKSPACE}/artifacts:/codesign/output 
+                    -e USERNAME=${USERNAME} -e PASSWORD=${password} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} 
+                    ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} 
+                    -input_file_path=/codesign/examples/codesign.ps1 -output_dir_path=/codesign/output"
             }
             post {
                 always {
