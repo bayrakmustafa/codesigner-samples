@@ -29,7 +29,6 @@ pipeline {
         stage('Sign and Save Artifact') {
             steps {
                 sh "docker run -i --rm --volume ${env.WORKSPACE}/artifacts:/codesign/output --env-file .env ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/codesign.ps1 -output_dir_path=/codesign/output"
-                sh "docker cp ${env.WORKSPACE}/artifacts/codesign.ps1 jenkins:${env.WORKSPACE}/codesign.ps1"
             }
             post {
                 always {
