@@ -9,7 +9,7 @@ pipeline {
         ENV_FILE         = credentials('es-env-demo')
         USERNAME         = credentials('es-username')
         password         = credentials('es-password')
-        CREDENTIAL_ID    = credentials('es-credantial-id')
+        CREDENTIAL_ID    = credentials('es-crendential-id')
         TOTP_SECRET      = credentials('es-totp-secret')
         GITHUB_TOKEN     = credentials('es-github-token')
         ENVIRONMENT_NAME = 'TEST'
