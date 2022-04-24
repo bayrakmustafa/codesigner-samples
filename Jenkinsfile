@@ -48,13 +48,13 @@ pipeline {
             parallel {
                 stage('Build Maven') {
                     steps {
-                        maven 'clean install -f java/pom.xml'
+                        sh 'mvn clean install -f java/pom.xml'
                         sh "cp java/target/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.jar ${env.WORKSPACE}/packages/${env.PROJECT_NAME}.jar"
                     }
                 }
                 stage('Build Gradle') {
                     steps {
-                        gradle 'clean build -p java -PsetupType=jar'
+                        sh 'gradle clean build -p java -PsetupType=jar'
                         sh "cp java/build/libs/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.jar ${env.WORKSPACE}/packages/${env.PROJECT_NAME}.jar"
                     }
                 }
