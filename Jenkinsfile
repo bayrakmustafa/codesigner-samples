@@ -33,7 +33,7 @@ pipeline {
 
         stage('Sign and Save Artifact') {
             steps {
-                sh "docker run -i --rm --dns 8.8.8.8 --network host --volume ${env.WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${password} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/codesign.ps1 -output_dir_path=/codesign/output"
+                sh "docker run -i --rm --dns 8.8.8.8 --network host --volume ${env.WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${password} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/codesign.ps1 -output_dir_path=/codesign/output"
             }
             post {
                 always {
