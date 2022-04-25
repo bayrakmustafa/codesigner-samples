@@ -56,7 +56,7 @@ pipeline {
                 stage('Build Dotnet Core DLL') {
                     steps {
                         sh "dotnet build dotnet/${env.PROJECT_NAME}.csproj -c Release"
-                        sh "cp dotnet/bin/Release/netcoreapp${env.DOTNET_VERSION}/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.dll ${env.WORKSPACE}/packages/${{env.PROJECT_NAME}}.dll"
+                        sh "cp dotnet/bin/Release/netcoreapp${env.DOTNET_VERSION}/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.dll ${env.WORKSPACE}/packages/${env.PROJECT_NAME}.dll"
                     }
                 }
                 stage('Build Maven JAR') {
