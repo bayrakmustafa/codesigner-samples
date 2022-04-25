@@ -10,7 +10,7 @@ pipeline {
         maven "MAVEN_3.8.5"
         jdk "JDK_9.0.4"
         gradle "GRADLE_7.4.2"
-        dotnetsdk "DOTNET_CORE_6.0.202"
+        dotnetsdk "DOTNET_CORE_3.1.24"
     }
 
     environment {
@@ -27,6 +27,7 @@ pipeline {
         PROJECT_VERSION  = '0.0.1'
         MAVEN_VERSION    = '3.8.5'
         JAVA_VERSION     = '9.0.4'
+        DOTNET_VERSION   = '3.1'
     }
 
     stages {    
@@ -52,6 +53,12 @@ pipeline {
                         sh "cp powershell/${env.PROJECT_NAME}.ps1 ${env.WORKSPACE}/packages/${env.PROJECT_NAME}.ps1"
                     }
                 }
+                stage('Build Dotnet Core DLL') {
+                    steps {
+                        sh "dotnet build dotnet/${env.PROJECT_NAME}.csproj -c Release"
+                        sh "cp dotnet/bin/Release/netcoreapp${env.DOTNET_VERSION}/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.dll ${env.WORKSPACE}/packages/${{env.PROJECT_NAME}}.dll"
+                    }
+                }
                 stage('Build Maven JAR') {
                     steps {
                         sh 'mvn clean install -f java/pom.xml'
@@ -74,6 +81,17 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: "artifacts/${env.PROJECT_NAME}.ps1", onlyIfSuccessful: true
+                }
+            }
+        }
+
+        stage('Sign and Save Dotnet Core DLL Artifact') {
+            steps {
+                sh "docker run -i --rm --dns 8.8.8.8 --network host --volume ${env.WORKSPACE}/packages:/codesign/examples --volume ${env.WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${password} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${env.PROJECT_NAME}-dll -output_dir_path=/codesign/output"
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: "artifacts/${env.PROJECT_NAME}.dll", onlyIfSuccessful: true
                 }
             }
         }
