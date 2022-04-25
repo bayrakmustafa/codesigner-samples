@@ -10,6 +10,7 @@ pipeline {
         maven "MAVEN_3.8.5"
         jdk "JDK_9.0.4"
         gradle "GRADLE_7.4.2"
+        dotnet "DOTNET_CORE_6.0.202"
     }
 
     environment {
@@ -72,7 +73,7 @@ pipeline {
             }
             post {
                 always {
-                    archiveArtifacts artifacts: "artifacts/codesign.ps1", onlyIfSuccessful: true
+                    archiveArtifacts artifacts: "artifacts/${env.PROJECT_NAME}.ps1", onlyIfSuccessful: true
                 }
             }
         }
