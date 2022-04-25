@@ -46,24 +46,29 @@ pipeline {
 
         stage('Build Packages') {
             parallel {
+                stage('Copy Powershell Script') {
+                    steps {
+                        sh "cp powershell/${env.PROJECT_NAME}.ps1 ${env.WORKSPACE}/packages/${env.PROJECT_NAME}.ps1"
+                    }
+                }
                 stage('Build Maven') {
                     steps {
                         sh 'mvn clean install -f java/pom.xml'
-                        sh "cp java/target/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.jar ${env.WORKSPACE}/packages/${env.PROJECT_NAME}.jar"
+                        sh "cp java/target/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.jar ${env.WORKSPACE}/packages/${env.PROJECT_NAME}-Maven.jar"
                     }
                 }
                 stage('Build Gradle') {
                     steps {
                         sh 'gradle clean build -p java -PsetupType=jar'
-                        sh "cp java/build/libs/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.jar ${env.WORKSPACE}/packages/${env.PROJECT_NAME}.jar"
+                        sh "cp java/build/libs/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.jar ${env.WORKSPACE}/packages/${env.PROJECT_NAME}-Gradle.jar"
                     }
                 }
             }
         }
 
-        stage('Sign and Save Artifact') {
+        stage('Sign and Save PS1 Artifact') {
             steps {
-                sh "docker run -i --rm --dns 8.8.8.8 --network host --volume ${env.WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${password} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/codesign.ps1 -output_dir_path=/codesign/output"
+                sh "docker run -i --rm --dns 8.8.8.8 --network host --volume ${env.WORKSPACE}/packages:/codesign/examples --volume ${env.WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${password} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${env.PROJECT_NAME}.ps1 -output_dir_path=/codesign/output"
             }
             post {
                 always {
@@ -71,6 +76,27 @@ pipeline {
                 }
             }
         }
+
+        stage('Sign and Save Maven JAR Artifact') {
+            steps {
+                sh "docker run -i --rm --dns 8.8.8.8 --network host --volume ${env.WORKSPACE}/packages:/codesign/examples --volume ${env.WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${password} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${env.PROJECT_NAME}-Maven.jar -output_dir_path=/codesign/output"
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: "artifacts/${env.PROJECT_NAME}-Maven.jar", onlyIfSuccessful: true
+                }
+            }
+        }
     
+        stage('Sign and Save Gradle JAR Artifact') {
+            steps {
+                sh "docker run -i --rm --dns 8.8.8.8 --network host --volume ${env.WORKSPACE}/packages:/codesign/examples --volume ${env.WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${password} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${env.PROJECT_NAME}-Gradle.jar -output_dir_path=/codesign/output"
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: "artifacts/${env.PROJECT_NAME}-Gradle.jar", onlyIfSuccessful: true
+                }
+            }
+        }
     }
 }
