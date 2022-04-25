@@ -22,7 +22,7 @@ This action provides the sign artifacts with CodeSignTool.
     # - batch_sign_hash: Sign hash(es) pre-computed with hash command.
     command: sign
 
-    # SSL.com account username
+    # SSL.com account username..
     username: ${{secrets.ES_USERNAME}}
 
     # SSL.com account password.
@@ -45,7 +45,7 @@ This action provides the sign artifacts with CodeSignTool.
 
 ### Inputs
 
-* `username`: SSL.com account username (**Required**)
+* `username`: SSL.com account username. (**Required**)
 
 * `password`: SSL.com account password (**Required**)
 
@@ -114,7 +114,7 @@ jobs:
         with:
           # Sign and timestamp code object.
           command: sign
-          # SSL.com account username
+          # SSL.com account username.
           username: ${{secrets.ES_USERNAME}}
           # SSL.com account password.
           password: ${{secrets.ES_PASSWORD}}
@@ -193,7 +193,7 @@ jobs:
         with:
           # Sign and timestamp code object.
           command: sign
-          # SSL.com account username
+          # SSL.com account username.
           username: ${{secrets.ES_USERNAME}}
           # SSL.com account password.
           password: ${{secrets.ES_PASSWORD}}
@@ -277,7 +277,7 @@ jobs:
         with:
           # Sign and timestamp code object.
           command: sign
-          # SSL.com account username
+          # SSL.com account username.
           username: ${{secrets.ES_USERNAME}}
           # SSL.com account password.
           password: ${{secrets.ES_PASSWORD}}
@@ -403,7 +403,7 @@ jobs:
         with:
           # Sign and timestamp code object.
           command: sign
-          # SSL.com account username
+          # SSL.com account username.
           username: ${{secrets.ES_USERNAME}}
           # SSL.com account password.
           password: ${{secrets.ES_PASSWORD}}
@@ -529,7 +529,7 @@ jobs:
         with:
           # Sign and timestamp code object.
           command: sign
-          # SSL.com account username
+          # SSL.com account username.
           username: ${{secrets.ES_USERNAME}}
           # SSL.com account password.
           password: ${{secrets.ES_PASSWORD}}
@@ -589,7 +589,7 @@ jobs:
         with:
           # Sign and timestamp code object.
           command: sign
-          # SSL.com account username
+          # SSL.com account username.
           username: ${{secrets.ES_USERNAME}}
           # SSL.com account password.
           password: ${{secrets.ES_PASSWORD}}
