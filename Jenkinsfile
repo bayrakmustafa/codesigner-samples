@@ -51,13 +51,13 @@ pipeline {
                         sh "cp powershell/${env.PROJECT_NAME}.ps1 ${env.WORKSPACE}/packages/${env.PROJECT_NAME}.ps1"
                     }
                 }
-                stage('Build Maven') {
+                stage('Build Maven JAR') {
                     steps {
                         sh 'mvn clean install -f java/pom.xml'
                         sh "cp java/target/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.jar ${env.WORKSPACE}/packages/${env.PROJECT_NAME}-Maven.jar"
                     }
                 }
-                stage('Build Gradle') {
+                stage('Build Gradle JAR') {
                     steps {
                         sh 'gradle clean build -p java -PsetupType=jar'
                         sh "cp java/build/libs/${env.PROJECT_NAME}-${env.PROJECT_VERSION}.jar ${env.WORKSPACE}/packages/${env.PROJECT_NAME}-Gradle.jar"
