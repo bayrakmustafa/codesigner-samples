@@ -33,7 +33,7 @@ pipeline {
     stages {    
         stage('Prepare for Signing') {
             steps {
-                sh 'cp ${ENV_FILE} .env'
+                sh "cp ${ENV_FILE} .env"
                 sh 'mkdir ${env.WORKSPACE}/artifacts'
                 sh 'mkdir ${env.WORKSPACE}/packages'
             }
