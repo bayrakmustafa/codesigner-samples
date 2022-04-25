@@ -41,7 +41,7 @@ pipeline {
 
         stage('Docker Pull Image') {
             steps {
-                sh "echo ${GITHUB_TOKEN} | docker login ghcr.io -u bayrakmustafa --password-stdin"
+                sh 'echo ${GITHUB_TOKEN} | docker login ghcr.io -u bayrakmustafa --password-stdin'
                 sh 'docker pull ghcr.io/bayrakmustafa/codesigner:latest'
             }
         }
