@@ -77,6 +77,8 @@ jobs:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
+      PROJECT_NAME: HelloWorld
+      PROJECT_VERSION: 0.0.1
 
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
@@ -85,9 +87,7 @@ jobs:
 
       # Download and cache dependencies
       - restore_cache:
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - restore_cache:
-          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
 
       # Build the project
       - run: gradle clean build -p java -PsetupType=jar
@@ -108,9 +108,5 @@ jobs:
       # Save gradle caches
       - save_cache:
           paths:
-            - ~/.gradle/wrapper
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - save_cache:
-          paths:
             - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
