@@ -46,7 +46,13 @@ jobs:
           name: Compile Java Library with Maven
           command: | 
             mvn clean install -f java/pom.xml
+
+      # Copy artifact to artifacts directory
+      - run:
+          name: Copy Artifact File
+          command: | 
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
+            ls -lrth ${CIRCLE_WORKING_DIRECTORY}/packages
 
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
