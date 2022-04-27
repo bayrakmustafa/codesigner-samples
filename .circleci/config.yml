@@ -52,7 +52,7 @@ jobs:
           name: Copy Artifact File
           command: | 
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
-            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/HelloWorld.jar
+            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}.jar
 
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
