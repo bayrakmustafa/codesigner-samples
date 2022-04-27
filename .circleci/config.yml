@@ -16,6 +16,11 @@ workflows:
 jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
   maven-jar:
+    # Create an environment variable
+    environment:
+        PROJECT_NAME: HelloWorld
+        PROJECT_VERSION: 0.0.1
+
     # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # Be sure to update the Docker image tag below to openjdk version of your application.
@@ -28,10 +33,25 @@ jobs:
     steps:
       # Checkout the code as the first step.
       - checkout
+
+      # Create Artifact Directory to store signed and unsigned artifact files
+      - run:
+          name: Create Artifacts Directory
+          command: |
+            mkdir ${CIRCLE_WORKING_DIRECTORY}/artifacts
+            mkdir ${CIRCLE_WORKING_DIRECTORY}/packages
+
       # Use mvn clean and package as the standard maven build phase
       - run:
           name: Build
-          command: mvn clean install -f java/pom.xml
+          command: | 
+            mvn clean install -f java/pom.xml
+            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
+
+      # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
+      - store_artifacts:
+          path: ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
+          destination: ${PROJECT_NAME}-Mavens.jar
 
   gradle-jar:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
