@@ -38,8 +38,8 @@ jobs:
       - run:
           name: Create Artifacts Directory
           command: |
-            mkdir ${CIRCLE_WORKING_DIRECTORY}/artifacts
-            mkdir ${CIRCLE_WORKING_DIRECTORY}/packages
+            mkdir -p ${CIRCLE_WORKING_DIRECTORY}/artifacts
+            mkdir -p ${CIRCLE_WORKING_DIRECTORY}/packages
 
       # Use mvn clean and package as the standard maven build phase
       - run:
