@@ -52,12 +52,12 @@ jobs:
           name: Copy Artifact File
           command: | 
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
-            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}.jar
+            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}-Maven.jar
 
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
           name: Upload Signed Files
-          path: /tmp/HelloWorld.jar
+          path: /tmp/HelloWorld-Maven.jar
           destination: HelloWorld-Maven.jar
 
   gradle-jar:
@@ -91,6 +91,19 @@ jobs:
 
       # Build the project
       - run: gradle clean build -p java -PsetupType=jar
+
+      # Copy artifact to artifacts directory
+      - run:
+          name: Copy Artifact File
+          command: | 
+            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
+            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}-Gradle.jar
+
+      # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
+      - store_artifacts:
+          name: Upload Signed Files
+          path: /tmp/HelloWorld-Gradle.jar
+          destination: HelloWorld-Gradle.jar
 
       # Save gradle caches
       - save_cache:
