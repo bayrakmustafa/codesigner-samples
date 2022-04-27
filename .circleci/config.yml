@@ -105,7 +105,7 @@ jobs:
           name: Copy Artifact File
           command: | 
             cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
-            cp java/build/libs/s${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}-Gradle.jar
+            cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}-Gradle.jar
 
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
