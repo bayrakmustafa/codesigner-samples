@@ -8,10 +8,10 @@ pipeline {
 
     // Install Build Tools
     tools {
-        maven "MAVEN_3.8.5" //https://plugins.jenkins.io/maven-plugin
-        jdk "JDK_9.0.4" //https://plugins.jenkins.io/jdk-tool
-        gradle "GRADLE_7.4.2" //https://plugins.jenkins.io/gradle
-        dotnetsdk "DOTNET_CORE_3.1.24" //https://plugins.jenkins.io/dotnet-sdk
+        maven "MAVEN_3.8.5"             //https://plugins.jenkins.io/maven-plugin
+        jdk "JDK_9.0.4"                 //https://plugins.jenkins.io/jdk-tool
+        gradle "GRADLE_7.4.2"           //https://plugins.jenkins.io/gradle
+        dotnetsdk "DOTNET_CORE_3.1.24"  //https://plugins.jenkins.io/dotnet-sdk
     }
 
     // Create an environment variable
