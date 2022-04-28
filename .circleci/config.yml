@@ -84,7 +84,7 @@ jobs:
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
           name: Upload Signed Files
-          path: /home/circleci/project/HelloWorld-Maven.jar
+          path: /home/circleci/project/artifacts/HelloWorld-Maven.jar
           destination: HelloWorld-Maven.jar
 
   gradle-jar:
