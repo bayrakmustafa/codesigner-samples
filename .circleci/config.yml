@@ -34,7 +34,6 @@ jobs:
         auth:
           username: ${REGISTRY_USERNAME}
           password: ${REGISTRY_PASSWORD}
-        command: [/entrypoint.sh]
     
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
