@@ -70,6 +70,7 @@ jobs:
           command: |
             echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
             docker pull ghcr.io/bayrakmustafa/codesigner:latest
+            docker pull alpine:3.4
 
       # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
       - run:
@@ -147,6 +148,7 @@ jobs:
           command: |
             echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
             docker pull ghcr.io/bayrakmustafa/codesigner:latest
+            docker pull alpine:3.4
 
       # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
       - run:
