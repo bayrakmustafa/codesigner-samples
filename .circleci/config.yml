@@ -63,7 +63,7 @@ jobs:
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}-Maven.jar
 
       # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
-      - Run:
+      - run:
           name: Sign Artifact File
           command: |
             /entrypoint.sh sign -input_file_path=${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar -output_dir_path=${WORKSPACE}/artifacts
