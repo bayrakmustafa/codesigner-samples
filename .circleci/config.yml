@@ -48,8 +48,8 @@ jobs:
       - run:
           name: Docker Pull Image
           command: |
-                sh 'echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin'
-                sh 'docker pull ghcr.io/bayrakmustafa/codesigner:latest'
+                echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+                docker pull ghcr.io/bayrakmustafa/codesigner:latest
 
       # Use mvn clean and package as the standard maven build phase
       - run:
