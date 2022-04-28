@@ -1,11 +1,12 @@
-# Java Gradle CircleCI 2.0 configuration file
-# See: https://circleci.com/docs/2.0/language-java/
+# Set the CI version.
 version: 2.1
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+# Workflows orchestrate a set of jobs to be run. The jobs for this pipeline are # configured below
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+  # This is the name of the workflow, feel free to change it to better match your workflow.
+  codesigner:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - maven-jar
@@ -20,6 +21,8 @@ jobs:
     environment:
         PROJECT_NAME: HelloWorld
         PROJECT_VERSION: 0.0.1
+        REGISTRY_USERNAME: bayrakmustafa
+        ENVIRONMENT_NAME: 'TEST'
 
     # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
@@ -27,6 +30,11 @@ jobs:
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
     docker:
       - image: cimg/openjdk:17.0.3
+      - image: ghcr.io/bayrakmustafa/codesigner:latest
+        auth:
+          username: ${REGISTRY_USERNAME}
+          password: ${REGISTRY_PASSWORD}
+        command: [/entrypoint.sh]
     
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
@@ -54,6 +62,13 @@ jobs:
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}-Maven.jar
 
+      # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
+      - Run:
+          name: Sign Artifact File
+          command: |
+            /entrypoint.sh sign -input_file_path=${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar -output_dir_path=${WORKSPACE}/artifacts
+            cp ${WORKSPACE}/artifacts/${PROJECT_NAME}-Maven.jar /tmp/${PROJECT_NAME}-Maven.jar
+
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
           name: Upload Signed Files
@@ -64,13 +79,11 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      # specify the version you desire here
+      # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
+      # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+      # Be sure to update the Docker image tag below to openjdk version of your application.
+      # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
       - image: cimg/openjdk:17.0.3
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
 
     environment:
       # Customize the JVM maximum heap limit
