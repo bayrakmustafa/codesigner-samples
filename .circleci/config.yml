@@ -48,8 +48,8 @@ jobs:
       - run:
           name: Docker Pull Image
           command: |
-                echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
-                docker pull ghcr.io/bayrakmustafa/codesigner:latest
+            echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+            docker pull ghcr.io/bayrakmustafa/codesigner:latest
 
       # Use mvn clean and package as the standard maven build phase
       - run:
@@ -63,6 +63,12 @@ jobs:
           command: | 
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}-Maven.jar
+
+      # Enable docker for CodeSigner
+      - setup_remote_docker:
+          name: Setup Remote Docker
+          version: 19.03.13
+          docker_layer_caching: false
 
       # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
       - run:
