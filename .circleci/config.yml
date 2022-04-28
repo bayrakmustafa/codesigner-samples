@@ -62,7 +62,7 @@ jobs:
       - setup_remote_docker:
           name: Setup Remote Docker
           version: 19.03.13
-          docker_layer_caching: false
+          docker_layer_caching: true
 
       # Pull Codesigner Docker Image From Github Registry
       - run:
@@ -75,7 +75,10 @@ jobs:
       - run:
           name: Sign Artifact File
           command: |
-            docker run -i --rm --dns 8.8.8.8 --network host --volume ${WORKSPACE}/packages:/codesign/examples --volume ${WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}-Maven.jar -output_dir_path=/codesign/output
+            docker create -v /codesign/packages --name codesign alpine:3.4 /bin/true
+            docker cp ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar codesign:/codesign/packages
+            docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-Maven.jar -output_dir_path=/codesign/packages
+            docker cp codesign:/codesign/packages/${PROJECT_NAME}-Maven.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-Maven.jar
 
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
