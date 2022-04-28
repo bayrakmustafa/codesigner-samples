@@ -44,13 +44,6 @@ jobs:
             mkdir -p ${CIRCLE_WORKING_DIRECTORY}/artifacts
             mkdir -p ${CIRCLE_WORKING_DIRECTORY}/packages
 
-        # Pull Codesigner Docker Image From Github Registry
-      - run:
-          name: Docker Pull Image
-          command: |
-            echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
-            docker pull ghcr.io/bayrakmustafa/codesigner:latest
-
       # Use mvn clean and package as the standard maven build phase
       - run:
           name: Compile Java Library with Maven
@@ -69,6 +62,13 @@ jobs:
           name: Setup Remote Docker
           version: 19.03.13
           docker_layer_caching: false
+
+      # Pull Codesigner Docker Image From Github Registry
+      - run:
+          name: Docker Pull Image
+          command: |
+            echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+            docker pull ghcr.io/bayrakmustafa/codesigner:latest
 
       # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
       - run:
