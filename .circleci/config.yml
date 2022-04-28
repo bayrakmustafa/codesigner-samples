@@ -24,6 +24,7 @@ jobs:
         REGISTRY_USERNAME: bayrakmustafa
         ENVIRONMENT_NAME: TEST
         COMMAND: sign
+        WORKSPACE: /home/circleci/project
 
     # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
@@ -42,8 +43,8 @@ jobs:
       - run:
           name: Create Artifacts Directory
           command: |
-            mkdir -p ${CIRCLE_WORKING_DIRECTORY}/artifacts
-            mkdir -p ${CIRCLE_WORKING_DIRECTORY}/packages
+            mkdir -p ${WORKSPACE}/artifacts
+            mkdir -p ${WORKSPACE}/packages
 
       # Use mvn clean and package as the standard maven build phase
       - run:
@@ -55,7 +56,7 @@ jobs:
       - run:
           name: Copy Artifact File
           command: | 
-            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
+            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar
 
       # Enable docker for CodeSigner
       - setup_remote_docker:
@@ -74,13 +75,12 @@ jobs:
       - run:
           name: Sign Artifact File
           command: |
-            docker run -i --rm --dns 8.8.8.8 --network host --volume ${CIRCLE_WORKING_DIRECTORY}/packages:/codesign/examples --volume ${CIRCLE_WORKING_DIRECTORY}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.jar -output_dir_path=/codesign/output
-            cp ${CIRCLE_WORKING_DIRECTORY}/artifacts/${PROJECT_NAME}.jar /tmp/${PROJECT_NAME}-Maven.jar
+            docker run -i --rm --dns 8.8.8.8 --network host --volume {WORKSPACE}/packages:/codesign/examples --volume ${WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}-Maven.jar -output_dir_path=/codesign/output
 
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
           name: Upload Signed Files
-          path: /tmp/HelloWorld-Maven.jar
+          path: ${WORKSPACE}/artifacts/${PROJECT_NAME}-Maven.jar
           destination: HelloWorld-Maven.jar
 
   gradle-jar:
