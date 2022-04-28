@@ -104,6 +104,10 @@ jobs:
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
       PROJECT_NAME: HelloWorld
       PROJECT_VERSION: 0.0.1
+      REGISTRY_USERNAME: bayrakmustafa
+      ENVIRONMENT_NAME: TEST
+      COMMAND: sign
+      WORKSPACE: /home/circleci/project
 
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
@@ -115,8 +119,8 @@ jobs:
       - run:
           name: Create Artifacts Directory
           command: |
-            mkdir -p ${CIRCLE_WORKING_DIRECTORY}/artifacts
-            mkdir -p ${CIRCLE_WORKING_DIRECTORY}/packages
+            mkdir -p ${WORKSPACE}/artifacts
+            mkdir -p ${WORKSPACE}/packages
 
       # Download and cache dependencies
       - restore_cache:
@@ -129,13 +133,35 @@ jobs:
       - run:
           name: Copy Artifact File
           command: | 
-            cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CIRCLE_WORKING_DIRECTORY}/packages/${PROJECT_NAME}.jar
-            cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar /tmp/${PROJECT_NAME}-Gradle.jar
+            cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/${PROJECT_NAME}-Gradle.jar
+            
+      # Enable docker for CodeSigner
+      - setup_remote_docker:
+          name: Setup Remote Docker
+          version: 19.03.13
+          docker_layer_caching: true
+
+      # Pull Codesigner Docker Image From Github Registry
+      - run:
+          name: Docker Pull Image
+          command: |
+            echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+            docker pull ghcr.io/bayrakmustafa/codesigner:latest
+
+      # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
+      - run:
+          name: Sign Artifact File
+          command: |
+            docker create -v /codesign/packages  --name codesign-in  alpine:3.4 /bin/true
+            docker create -v /codesign/artifacts --name codesign-out alpine:3.4 /bin/true
+            docker cp ${WORKSPACE}/packages/${PROJECT_NAME}-Gradle.jar codesign-in:/codesign/packages
+            docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign-in --volumes-from codesign-out -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-Gradle.jar -output_dir_path=/codesign/artifacts
+            docker cp codesign-out:/codesign/artifacts/${PROJECT_NAME}-Gradle.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-Gradle.jar
 
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
           name: Upload Signed Files
-          path: /tmp/HelloWorld-Gradle.jar
+          path: /home/circleci/project/artifacts/HelloWorld-Gradle.jar
           destination: HelloWorld-Gradle.jar
 
       # Save gradle caches
