@@ -75,15 +75,16 @@ jobs:
       - run:
           name: Sign Artifact File
           command: |
-            docker create -v /codesign/packages --name codesign alpine:3.4 /bin/true
+            docker create -v /codesign/packages  --name codesign-in  alpine:3.4 /bin/true
+            docker create -v /codesign/artifacts --name codesign-out alpine:3.4 /bin/true
             docker cp ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar codesign:/codesign/packages
-            docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-Maven.jar -output_dir_path=/codesign/packages
-            docker cp codesign:/codesign/packages/${PROJECT_NAME}-Maven.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-Maven.jar
+            docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign-in --volumes-from codesign-out -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-Maven.jar -output_dir_path=/codesign/artifacts
+            docker cp codesign-out :/codesign/artifacts/${PROJECT_NAME}-Maven.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-Maven.jar
 
       # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
       - store_artifacts:
           name: Upload Signed Files
-          path: ${WORKSPACE}/artifacts/${PROJECT_NAME}-Maven.jar
+          path: /home/circleci/project/HelloWorld-Maven.jar
           destination: HelloWorld-Maven.jar
 
   gradle-jar:
