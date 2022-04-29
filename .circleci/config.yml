@@ -6,6 +6,16 @@ version: 2.1
 # Workflows orchestrate a set of jobs to be run. The jobs for this pipeline are # configured below
 workflows:
   # This is the name of the workflow, feel free to change it to better match your workflow.
+  codesigner-dotnet-dll:
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - dotnet-build-dll
+      - codesigner-sign-artifact:
+          requires:
+            - dotnet-build-dll
+          artifact-suffix: 'HelloWorld.dll'
+
+  # This is the name of the workflow, feel free to change it to better match your workflow.
   codesigner-maven-jar:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
@@ -13,7 +23,7 @@ workflows:
       - codesigner-sign-artifact:
           requires:
             - maven-build-jar
-          artifact-suffix: Maven
+          artifact-suffix: 'HelloWorld-Maven.jar'
 
 
   # This is the name of the workflow, feel free to change it to better match your workflow.
@@ -24,11 +34,59 @@ workflows:
       - codesigner-sign-artifact:
           requires:
             - gradle-build-jar
-          artifact-suffix: Gradle
+          artifact-suffix: 'HelloWorld-Gradle.jar'
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
+  dotnet-build-dll:
+    # Create an environment variable
+    environment:
+        PROJECT_NAME: HelloWorld
+        PROJECT_VERSION: 0.0.1
+        DOTNET_VERSION: 3.1
+        WORKSPACE: /home/circleci/project
+
+    # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
+    # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # Be sure to update the Docker image tag below to openjdk version of your application.
+    # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:3.1-bullseye
+
+    working_directory: /home/circleci/project
+    
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+
+      # Create Artifact Directory to store signed and unsigned artifact files
+      - run:
+          name: Create Artifacts Directory
+          command: |
+            mkdir -p ${WORKSPACE}/artifacts
+            mkdir -p ${WORKSPACE}/packages
+
+      # Use mvn clean and package as the standard maven build phase
+      - run:
+          name: Compile Java Library with Maven
+          command: | 
+            dotnet build dotnet/${PROJECT_NAME}.csproj -c Release
+
+      # Copy artifact to artifacts directory
+      - run:
+          name: Copy Artifact File
+          command: | 
+            cp dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll ${WORKSPACE}/packages/HelloWorld.dll
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - packages/*
+
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
   maven-build-jar:
     # Create an environment variable
@@ -69,7 +127,7 @@ jobs:
       - run:
           name: Copy Artifact File
           command: | 
-            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar
+            cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/HelloWorld-Maven.jar
 
       - persist_to_workspace:
           root: .
@@ -121,7 +179,7 @@ jobs:
       - run:
           name: Copy Artifact File
           command: | 
-            cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/${PROJECT_NAME}-Gradle.jar
+            cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/HelloWorld-Gradle.jar
 
       # Save gradle caches
       - save_cache:
@@ -145,7 +203,7 @@ jobs:
           WORKSPACE: /home/circleci/project
 
       parameters:
-          artifact-suffix:
+          artifact-name:
             type: string
             default: ''
 
@@ -191,12 +249,12 @@ jobs:
             command: |
               docker create -v /codesign/packages  --name codesign-in  alpine:3.4 /bin/true
               docker create -v /codesign/artifacts --name codesign-out alpine:3.4 /bin/true
-              docker cp ${WORKSPACE}/packages/${PROJECT_NAME}-<< parameters.artifact-suffix >>.jar codesign-in:/codesign/packages
-              docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign-in --volumes-from codesign-out -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-<< parameters.artifact-suffix >>.jar -output_dir_path=/codesign/artifacts
-              docker cp codesign-out:/codesign/artifacts/${PROJECT_NAME}-<< parameters.artifact-suffix >>.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-<< parameters.artifact-suffix >>.jar
+              docker cp ${WORKSPACE}/packages/<< parameters.artifact-name >> codesign-in:/codesign/packages
+              docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign-in --volumes-from codesign-out -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/<< parameters.artifact-name >> -output_dir_path=/codesign/artifacts
+              docker cp codesign-out:/codesign/artifacts/<< parameters.artifact-name >> ${WORKSPACE}/artifacts/<< parameters.artifact-name >>
 
         # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
         - store_artifacts:
             name: Upload Signed Files
-            path: /home/circleci/project/artifacts/HelloWorld-<< parameters.artifact-suffix >>.jar
-            destination: HelloWorld-<< parameters.artifact-suffix >>.jar
+            path: /home/circleci/project/artifacts/<< parameters.artifact-name >>
+            destination: << parameters.artifact-name >>
