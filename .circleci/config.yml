@@ -13,12 +13,18 @@ workflows:
       - codesigner-sign-artifact:
           requires:
             - maven-build-jar
+          artifact-suffix: Maven
+
 
   # This is the name of the workflow, feel free to change it to better match your workflow.
   codesigner-gradle-jar:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - gradle-jar
+      - gradle-build-jar
+      - codesigner-sign-artifact:
+          requires:
+            - gradle-build-jar
+          artifact-suffix: Gradle
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -73,7 +79,7 @@ jobs:
           paths:
             - packages/*
 
-  gradle-jar:
+  gradle-build-jar:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
@@ -94,6 +100,8 @@ jobs:
       ENVIRONMENT_NAME: TEST
       COMMAND: sign
       WORKSPACE: /home/circleci/project
+
+    working_directory: /home/circleci/project
 
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
@@ -120,42 +128,17 @@ jobs:
           name: Copy Artifact File
           command: | 
             cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/${PROJECT_NAME}-Gradle.jar
-            
-      # Enable docker for CodeSigner
-      - setup_remote_docker:
-          name: Setup Remote Docker
-          version: 19.03.13
-          docker_layer_caching: true
-
-      # Pull Codesigner Docker Image From Github Registry
-      - run:
-          name: Docker Pull Image
-          command: |
-            echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
-            docker pull ghcr.io/bayrakmustafa/codesigner:latest
-            docker pull alpine:3.4
-
-      # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
-      - run:
-          name: Sign Artifact File
-          command: |
-            docker create -v /codesign/packages  --name codesign-in  alpine:3.4 /bin/true
-            docker create -v /codesign/artifacts --name codesign-out alpine:3.4 /bin/true
-            docker cp ${WORKSPACE}/packages/${PROJECT_NAME}-Gradle.jar codesign-in:/codesign/packages
-            docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign-in --volumes-from codesign-out -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-Gradle.jar -output_dir_path=/codesign/artifacts
-            docker cp codesign-out:/codesign/artifacts/${PROJECT_NAME}-Gradle.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-Gradle.jar
-
-      # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
-      - store_artifacts:
-          name: Upload Signed Files
-          path: /home/circleci/project/artifacts/HelloWorld-Gradle.jar
-          destination: HelloWorld-Gradle.jar
 
       # Save gradle caches
       - save_cache:
           paths:
             - ~/.gradle/caches
           key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - packages/*
   
   codesigner-sign-artifact:
       # Create an environment variable
