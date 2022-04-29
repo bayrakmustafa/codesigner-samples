@@ -35,9 +35,6 @@ jobs:
     environment:
         PROJECT_NAME: HelloWorld
         PROJECT_VERSION: 0.0.1
-        REGISTRY_USERNAME: bayrakmustafa
-        ENVIRONMENT_NAME: TEST
-        COMMAND: sign
         WORKSPACE: /home/circleci/project
 
     # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
@@ -96,9 +93,6 @@ jobs:
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
       PROJECT_NAME: HelloWorld
       PROJECT_VERSION: 0.0.1
-      REGISTRY_USERNAME: bayrakmustafa
-      ENVIRONMENT_NAME: TEST
-      COMMAND: sign
       WORKSPACE: /home/circleci/project
 
     working_directory: /home/circleci/project
@@ -153,7 +147,7 @@ jobs:
       parameters:
           artifact-suffix:
             type: string
-            default: Maven
+            default: ''
 
       # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
       # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
