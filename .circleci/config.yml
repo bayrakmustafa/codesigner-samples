@@ -40,6 +40,8 @@ jobs:
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
     docker:
       - image: cimg/openjdk:17.0.3
+
+    working_directory: /home/circleci/project
     
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
@@ -172,6 +174,8 @@ jobs:
       docker:
         - image: cimg/openjdk:17.0.3
 
+      working_directory: /home/circleci/project
+
       # Add steps to the job
       # See: https://circleci.com/docs/2.0/configuration-reference/#steps
       steps:
@@ -183,7 +187,7 @@ jobs:
               mkdir -p ${WORKSPACE}/packages
 
         - attach_workspace:
-            at: ${WORKSPACE}
+            at: /home/circleci/project
 
         - run:
             name: Check Workspace File
