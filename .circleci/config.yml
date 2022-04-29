@@ -168,7 +168,7 @@ jobs:
           WORKSPACE: /home/circleci/project
 
       parameters:
-          ARTIFACT_SUFFIX:
+          artifact-suffix:
             type: string
             default: Maven
 
@@ -215,11 +215,11 @@ jobs:
               docker create -v /codesign/packages  --name codesign-in  alpine:3.4 /bin/true
               docker create -v /codesign/artifacts --name codesign-out alpine:3.4 /bin/true
               docker cp ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar codesign-in:/codesign/packages
-              docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign-in --volumes-from codesign-out -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-${<< parameters.access-key >>}.jar -output_dir_path=/codesign/artifacts
-              docker cp codesign-out:/codesign/artifacts/${PROJECT_NAME}-Maven.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-${<< parameters.access-key >>}.jar
+              docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign-in --volumes-from codesign-out -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-${<< parameters.artifact-suffix >>}.jar -output_dir_path=/codesign/artifacts
+              docker cp codesign-out:/codesign/artifacts/${PROJECT_NAME}-Maven.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-${<< parameters.artifact-suffix >>}.jar
 
         # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
         - store_artifacts:
             name: Upload Signed Files
-            path: /home/circleci/project/artifacts/HelloWorld-${<< parameters.access-key >>}.jar
+            path: /home/circleci/project/artifacts/HelloWorld-${<< parameters.artifact-suffix >>}.jar
             destination: HelloWorld-Maven.jar
