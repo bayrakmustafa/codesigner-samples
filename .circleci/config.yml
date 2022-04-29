@@ -13,7 +13,7 @@ workflows:
       - codesigner-sign-artifact:
           requires:
             - dotnet-build-dll
-          artifact-suffix: 'HelloWorld.dll'
+          artifact-name: 'HelloWorld.dll'
 
   # This is the name of the workflow, feel free to change it to better match your workflow.
   codesigner-maven-jar:
@@ -23,7 +23,7 @@ workflows:
       - codesigner-sign-artifact:
           requires:
             - maven-build-jar
-          artifact-suffix: 'HelloWorld-Maven.jar'
+          artifact-name: 'HelloWorld-Maven.jar'
 
 
   # This is the name of the workflow, feel free to change it to better match your workflow.
@@ -34,7 +34,7 @@ workflows:
       - codesigner-sign-artifact:
           requires:
             - gradle-build-jar
-          artifact-suffix: 'HelloWorld-Gradle.jar'
+          artifact-name: 'HelloWorld-Gradle.jar'
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
