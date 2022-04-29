@@ -10,7 +10,10 @@ workflows:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - maven-build-jar
-      - codesigner-sign-artifact
+      - codesigner-sign-artifact:
+          requires:
+            - maven-build-jar
+
   # This is the name of the workflow, feel free to change it to better match your workflow.
   codesigner-gradle-jar:
     # Inside the workflow, you define the jobs you want to run.
@@ -64,7 +67,7 @@ jobs:
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar
 
       - persist_to_workspace:
-          root: ${WORKSPACE}
+          root: .
           paths:
             - packages/*
 
