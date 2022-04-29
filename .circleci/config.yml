@@ -1,10 +1,6 @@
 # Set the CI version.
 version: 2.1
 
-# Orbs are shareable packages of CircleCI configuration you can use to simplify your builds.
-orbs: 
-  gradle: circleci/gradle@2.2.0
-
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 # Workflows orchestrate a set of jobs to be run. The jobs for this pipeline are # configured below
@@ -187,8 +183,7 @@ jobs:
           key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
 
       # Build the project
-      - gradle/run:
-          command: clean build -p java -PsetupType=jar
+      - run: gradle clean build -p java -PsetupType=jar
 
       # Copy artifact to artifacts directory
       - run:
