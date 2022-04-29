@@ -63,6 +63,11 @@ jobs:
           command: | 
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar
 
+      - persist_to_workspace:
+          root: ${WORKSPACE}
+          paths:
+            - packages/*
+
   gradle-jar:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
@@ -167,6 +172,16 @@ jobs:
       # Add steps to the job
       # See: https://circleci.com/docs/2.0/configuration-reference/#steps
       steps:
+        # Create Artifact Directory to store signed and unsigned artifact files
+        - run:
+            name: Create Artifacts Directory
+            command: |
+              mkdir -p ${WORKSPACE}/artifacts
+              mkdir -p ${WORKSPACE}/packages
+
+        - attach_workspace:
+            at: ${WORKSPACE}
+
         # Enable docker for CodeSigner
         - setup_remote_docker:
             name: Setup Remote Docker
