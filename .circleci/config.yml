@@ -36,6 +36,16 @@ workflows:
             - gradle-build-jar
           artifact-name: 'HelloWorld-Gradle.jar'
 
+  # This is the name of the workflow, feel free to change it to better match your workflow.
+  codesigner-powershell-ps1:
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - powershell-build-ps1
+      - codesigner-sign-artifact:
+          requires:
+            - powershell-build-ps1
+          artifact-name: 'HelloWorld.ps1'
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -72,7 +82,7 @@ jobs:
 
       # Use mvn clean and package as the standard maven build phase
       - run:
-          name: Compile Java Library with Maven
+          name: Compile Dotnet Library with Dotnet Core
           command: | 
             dotnet build dotnet/${PROJECT_NAME}.csproj -c Release
 
@@ -192,6 +202,42 @@ jobs:
           paths:
             - packages/*
   
+  # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
+  powershell-build-ps1:
+    # Create an environment variable
+    environment:
+        PROJECT_NAME: HelloWorld
+        WORKSPACE: /home/circleci/project
+
+    # These next lines define a linux virtual machine executor: https://circleci.com/docs/2.0/executor-types/
+    machine: true
+
+    working_directory: /home/circleci/project
+    
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+
+      # Create Artifact Directory to store signed and unsigned artifact files
+      - run:
+          name: Create Artifacts Directory
+          command: |
+            mkdir -p ${WORKSPACE}/artifacts
+            mkdir -p ${WORKSPACE}/packages
+
+      # Copy artifact to artifacts directory
+      - run:
+          name: Copy Artifact File
+          command: | 
+            cp powershell/${PROJECT_NAME}.ps1 ${WORKSPACE}/packages/HelloWorld.ps1
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - packages/*
+
   codesigner-sign-artifact:
       # Create an environment variable
       environment:
