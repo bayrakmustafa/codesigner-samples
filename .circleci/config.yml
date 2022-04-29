@@ -195,8 +195,6 @@ jobs:
   codesigner-sign-artifact:
       # Create an environment variable
       environment:
-          PROJECT_NAME: HelloWorld
-          PROJECT_VERSION: 0.0.1
           REGISTRY_USERNAME: bayrakmustafa
           ENVIRONMENT_NAME: TEST
           COMMAND: sign
