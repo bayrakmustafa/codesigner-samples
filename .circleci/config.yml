@@ -185,6 +185,14 @@ jobs:
         - attach_workspace:
             at: ${WORKSPACE}
 
+        - run:
+            name: Check Workspace File
+            command: |
+              ls -lrth
+              ls -lrth ${WORKSPACE}
+              find . -iname "*.jar"
+              find ${WORKSPACE} -iname "*.jar"
+
         # Enable docker for CodeSigner
         - setup_remote_docker:
             name: Setup Remote Docker
