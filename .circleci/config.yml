@@ -9,7 +9,8 @@ workflows:
   codesigner-maven-jar:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - maven-jar
+      - maven-build-jar
+      - codesigner-sign-artifact
   # This is the name of the workflow, feel free to change it to better match your workflow.
   codesigner-gradle-jar:
     # Inside the workflow, you define the jobs you want to run.
@@ -20,7 +21,7 @@ workflows:
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
-  maven-jar:
+  maven-build-jar:
     # Create an environment variable
     environment:
         PROJECT_NAME: HelloWorld
@@ -61,36 +62,6 @@ jobs:
           name: Copy Artifact File
           command: | 
             cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar
-
-      # Enable docker for CodeSigner
-      - setup_remote_docker:
-          name: Setup Remote Docker
-          version: 19.03.13
-          docker_layer_caching: true
-
-      # Pull Codesigner Docker Image From Github Registry
-      - run:
-          name: Docker Pull Image
-          command: |
-            echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
-            docker pull ghcr.io/bayrakmustafa/codesigner:latest
-            docker pull alpine:3.4
-
-      # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
-      - run:
-          name: Sign Artifact File
-          command: |
-            docker create -v /codesign/packages  --name codesign-in  alpine:3.4 /bin/true
-            docker create -v /codesign/artifacts --name codesign-out alpine:3.4 /bin/true
-            docker cp ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar codesign-in:/codesign/packages
-            docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign-in --volumes-from codesign-out -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-Maven.jar -output_dir_path=/codesign/artifacts
-            docker cp codesign-out:/codesign/artifacts/${PROJECT_NAME}-Maven.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-Maven.jar
-
-      # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
-      - store_artifacts:
-          name: Upload Signed Files
-          path: /home/circleci/project/artifacts/HelloWorld-Maven.jar
-          destination: HelloWorld-Maven.jar
 
   gradle-jar:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
@@ -175,3 +146,53 @@ jobs:
           paths:
             - ~/.gradle/caches
           key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
+  
+  codesigner-sign-artifact:
+      # Create an environment variable
+      environment:
+          PROJECT_NAME: HelloWorld
+          PROJECT_VERSION: 0.0.1
+          REGISTRY_USERNAME: bayrakmustafa
+          ENVIRONMENT_NAME: TEST
+          COMMAND: sign
+          WORKSPACE: /home/circleci/project
+
+      # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
+      # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+      # Be sure to update the Docker image tag below to openjdk version of your application.
+      # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
+      docker:
+        - image: cimg/openjdk:17.0.3
+
+      # Add steps to the job
+      # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      steps:
+        # Enable docker for CodeSigner
+        - setup_remote_docker:
+            name: Setup Remote Docker
+            version: 19.03.13
+            docker_layer_caching: true
+
+        # Pull Codesigner Docker Image From Github Registry
+        - run:
+            name: Docker Pull Image
+            command: |
+              echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+              docker pull ghcr.io/bayrakmustafa/codesigner:latest
+              docker pull alpine:3.4
+
+        # This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
+        - run:
+            name: Sign Artifact File
+            command: |
+              docker create -v /codesign/packages  --name codesign-in  alpine:3.4 /bin/true
+              docker create -v /codesign/artifacts --name codesign-out alpine:3.4 /bin/true
+              docker cp ${WORKSPACE}/packages/${PROJECT_NAME}-Maven.jar codesign-in:/codesign/packages
+              docker run -i --rm --dns 8.8.8.8 --network host --volumes-from codesign-in --volumes-from codesign-out -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/packages/${PROJECT_NAME}-Maven.jar -output_dir_path=/codesign/artifacts
+              docker cp codesign-out:/codesign/artifacts/${PROJECT_NAME}-Maven.jar ${WORKSPACE}/artifacts/${PROJECT_NAME}-Maven.jar
+
+        # This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete
+        - store_artifacts:
+            name: Upload Signed Files
+            path: /home/circleci/project/artifacts/HelloWorld-Maven.jar
+            destination: HelloWorld-Maven.jar
