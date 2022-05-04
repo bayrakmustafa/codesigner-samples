@@ -51,16 +51,6 @@ workflows:
           artifact-name: 'HelloWorld.exe'
 
   # This is the name of the workflow, feel free to change it to better match your workflow.
-  codesigner-gradle-msi:
-    # Inside the workflow, you define the jobs you want to run.
-    jobs:
-      - gradle-build-msi
-      - codesigner-sign-artifact:
-          requires:
-            - gradle-build-msi
-          artifact-name: 'HelloWorld.msi'
-
-  # This is the name of the workflow, feel free to change it to better match your workflow.
   codesigner-powershell-ps1:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
