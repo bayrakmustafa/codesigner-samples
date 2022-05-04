@@ -51,6 +51,16 @@ workflows:
           artifact-name: 'HelloWorld.exe'
 
   # This is the name of the workflow, feel free to change it to better match your workflow.
+  codesigner-gradle-msi:
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - gradle-build-msi
+      - codesigner-sign-artifact:
+          requires:
+            - gradle-build-msi
+          artifact-name: 'HelloWorld.msi'
+
+  # This is the name of the workflow, feel free to change it to better match your workflow.
   codesigner-powershell-ps1:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
@@ -275,6 +285,73 @@ jobs:
           name: Copy Artifact File
           command: | 
             Copy-Item "java/build/release/windows/*.exe" -Destination "/home/circleci/project/packages/HelloWorld.exe"
+
+      # Save gradle caches
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - packages/*
+
+  gradle-build-msi:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    executor: win/default
+
+    # Create an environment variable
+    environment:
+      PROJECT_NAME: HelloWorld
+      PROJECT_VERSION: 0.0.1
+      WORKSPACE: /home/circleci/project
+
+    working_directory: /home/circleci/project
+
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+
+      - run:
+          name: Install java
+          command: |
+            choco install oraclejdk --version=17.0.2
+            choco install gradle --version=7.4
+            choco install wixtoolset --version=3.11.2
+
+      # Create Artifact Directory to store signed and unsigned artifact files
+      - run:
+          name: Create Artifacts Directory
+          command: |
+            mkdir -p /home/circleci/project\artifacts
+            mkdir -p /home/circleci/project\packages
+
+      # Download and cache dependencies
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
+
+      # Prepare the project properties
+      - run:
+          name: Prepare Gradle Properties
+          command: |
+            New-Item /home/circleci/project/java/gradle.properties
+            Set-Content /home/circleci/project/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
+
+      # Build the project
+      - run:
+          name: Compile Java Library with Gradle
+          command: |
+            gradle build jpackage -x test --warning-mode all -p java -PsetupType=msi
+
+      # Copy artifact to artifacts directory
+      - run:
+          name: Copy Artifact File
+          command: | 
+            Copy-Item "java/build/release/windows/*.msi" -Destination "/home/circleci/project/packages/HelloWorld.msi"
 
       # Save gradle caches
       - save_cache:
