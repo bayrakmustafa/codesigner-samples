@@ -203,10 +203,6 @@ jobs:
             mkdir -p ${WORKSPACE}/artifacts
             mkdir -p ${WORKSPACE}/packages
 
-      # Download and cache dependencies
-      - restore_cache:
-          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
-
       # Build the project
       - run:
           name: Compile Java Library with Gradle
@@ -218,12 +214,6 @@ jobs:
           name: Copy Artifact File
           command: | 
             cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${WORKSPACE}/packages/HelloWorld-Gradle.jar
-
-      # Save gradle caches
-      - save_cache:
-          paths:
-            - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
 
       - persist_to_workspace:
           root: .
@@ -250,7 +240,7 @@ jobs:
       - checkout
 
       - run:
-          name: Install java
+          name: Install Java
           command: |
             choco install oraclejdk --version=17.0.2
             choco install gradle --version=7.4
@@ -262,10 +252,6 @@ jobs:
           command: |
             mkdir -p /home/circleci/project\artifacts
             mkdir -p /home/circleci/project\packages
-
-      # Download and cache dependencies
-      - restore_cache:
-          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
 
       # Prepare the project properties
       - run:
@@ -285,12 +271,6 @@ jobs:
           name: Copy Artifact File
           command: | 
             Copy-Item "java/build/release/windows/*.exe" -Destination "/home/circleci/project/packages/HelloWorld.exe"
-
-      # Save gradle caches
-      - save_cache:
-          paths:
-            - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
 
       - persist_to_workspace:
           root: .
@@ -317,7 +297,7 @@ jobs:
       - checkout
 
       - run:
-          name: Install java
+          name: Install Java
           command: |
             choco install oraclejdk --version=17.0.2
             choco install gradle --version=7.4
@@ -329,10 +309,6 @@ jobs:
           command: |
             mkdir -p /home/circleci/project\artifacts
             mkdir -p /home/circleci/project\packages
-
-      # Download and cache dependencies
-      - restore_cache:
-          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
 
       # Prepare the project properties
       - run:
@@ -352,12 +328,6 @@ jobs:
           name: Copy Artifact File
           command: | 
             Copy-Item "java/build/release/windows/*.msi" -Destination "/home/circleci/project/packages/HelloWorld.msi"
-
-      # Save gradle caches
-      - save_cache:
-          paths:
-            - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "java/build.gradle" }}
 
       - persist_to_workspace:
           root: .
