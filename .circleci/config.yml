@@ -51,6 +51,16 @@ workflows:
           artifact-name: 'HelloWorld.exe'
 
   # This is the name of the workflow, feel free to change it to better match your workflow.
+  codesigner-gradle-msi:
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - gradle-build-msi
+      - codesigner-sign-artifact:
+          requires:
+            - gradle-build-msi
+          artifact-name: 'HelloWorld.msi'
+
+  # This is the name of the workflow, feel free to change it to better match your workflow.
   codesigner-powershell-ps1:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
@@ -213,7 +223,10 @@ jobs:
   gradle-build-exe:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    executor: win/default
+    executor: 
+      name: win/default
+      size: large
+      variant: vs2019
 
     # Create an environment variable
     environment:
@@ -270,7 +283,10 @@ jobs:
   gradle-build-msi:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    executor: win/default
+    executor: 
+      name: win/default
+      size: large
+      variant: vs2019
 
     # Create an environment variable
     environment:
