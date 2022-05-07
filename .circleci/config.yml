@@ -421,6 +421,7 @@ jobs:
       docker:
         - image: cimg/openjdk:17.0.3
 
+      # Working directory for the job on Circle-CI
       working_directory: /home/circleci/project
 
       # Add steps to the job
