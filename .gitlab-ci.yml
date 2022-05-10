@@ -16,13 +16,27 @@ build-dotnet:
     - mkdir -p ${CI_PROJECT_DIR}/packages
   script:
     - dotnet build dotnet/${PROJECT_NAME}.csproj -c Release
-    - cp dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll ${CI_PROJECT_DIR}/packages/HelloWorld.dll
+    - cp dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.dll
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/packages/HelloWorld.dll
     expire_in: 10 minutes
 
-sign-artifacts:
+build-maven-jar:
+  stage: build
+  image: maven:3.8.3-openjdk-17
+  before_script:
+    - mkdir -p ${CI_PROJECT_DIR}/artifacts
+    - mkdir -p ${CI_PROJECT_DIR}/packages
+  script:
+    - mvn clean install -f java/pom.xml
+    - cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
+    expire_in: 10 minutes
+
+sign-dotnet-artifacts:
   stage: sign
   image: docker:19.03.0
   services:
@@ -42,3 +56,24 @@ sign-artifacts:
     expire_in: 1 days
   dependencies:
     - build-dotnet
+
+sign-maven-artifacts:
+  stage: sign
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
+  variables:
+    COMMAND: "sign"
+  before_script:
+    - mkdir -p ${CI_PROJECT_DIR}/artifacts
+    - mkdir -p ${CI_PROJECT_DIR}/packages
+  script:
+    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+    - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+    - docker run -i --rm --dns 8.8.8.8 --network host --volume ${CI_PROJECT_DIR}/packages:/codesign/examples --volume ${CI_PROJECT_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.jar -output_dir_path=/codesign/output
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/artifacts/${PROJECT_NAME}.jar
+    expire_in: 1 days
+  dependencies:
+    - build-maven-jar
