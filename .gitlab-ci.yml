@@ -1,5 +1,5 @@
 stages:
-  - codesigner-dotnet-dll
+  - dotnet
 
 variables:
   PROJECT_NAME: "HelloWorld"
@@ -8,7 +8,7 @@ variables:
   ENVIRONMENT_NAME: "TEST"
 
 build:
-  stage: codesigner-dotnet-dll
+  stage: dotnet
   image: mcr.microsoft.com/dotnet/sdk:3.1-bullseye
   script:
     - mkdir ${CI_BUILDS_DIR}/artifacts
@@ -21,10 +21,10 @@ build:
     expire_in: 10 minutes
 
 sign:
-  stage: codesigner-dotnet-dll
-  image: mcr.microsoft.com/dotnet/sdk:3.1-bullseye
+  stage: dotnet
+  image: docker:19.03.0
   services:
-    - docker:dind
+    - docker:19.03.0-dind
   script:
     - mkdir ${CI_BUILDS_DIR}/artifacts
     - mkdir ${CI_BUILDS_DIR}/packages
