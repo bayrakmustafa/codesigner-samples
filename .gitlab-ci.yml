@@ -25,6 +25,8 @@ sign:
   image: docker:19.03.0
   services:
     - docker:19.03.0-dind
+  variables:
+    COMMAND: "sign"
   script:
     - mkdir ${CI_BUILDS_DIR}/artifacts
     - mkdir ${CI_BUILDS_DIR}/packages
