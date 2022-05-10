@@ -42,4 +42,4 @@ sign-artifacts:
       - ${CI_PROJECT_DIR}/artifacts/${PROJECT_NAME}.dll
     expire_in: 10 minutes
   dependencies:
-    - build
+    - build-dotnet
