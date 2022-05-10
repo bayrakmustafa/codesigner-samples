@@ -18,7 +18,7 @@ build:
     - cp dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll ${CI_PROJECT_DIR}/packages/HelloWorld.dll
   artifacts:
     paths:
-      - ${CI_PROJECT_DIR}/packages/HelloWorld.dll
+      - packages/HelloWorld.dll
     expire_in: 10 minutes
 
 sign:
