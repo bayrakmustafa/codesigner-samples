@@ -19,8 +19,6 @@ build:
     paths:
       - ${CI_BUILDS_DIR}/packages/HelloWorld.dll
     expire_in: 10 minutes
-  dependencies:
-    - prepare
 
 sign:
   stage: codesigner-dotnet-dll
