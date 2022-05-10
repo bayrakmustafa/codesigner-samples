@@ -6,6 +6,11 @@ variables:
   PROJECT_VERSION: "0.0.1"
   DOTNET_VERSION: "3.1"
 
+cache:
+  paths:
+    - ${CI_BUILDS_DIR}/artifacts
+    - ${CI_BUILDS_DIR}/packages
+
 prepare:
   stage: codesigner-dotnet-dll
   image: mcr.microsoft.com/dotnet/sdk:3.1-bullseye
