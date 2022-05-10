@@ -31,8 +31,8 @@ sign:
   before_script:
     - mkdir ${CI_PROJECT_DIR}/artifacts
     - mkdir ${CI_PROJECT_DIR}/packages
-    - cp packages/HelloWorld.dll ${CI_PROJECT_DIR}/packages
   script:
+    - cp packages/HelloWorld.dll ${CI_PROJECT_DIR}/packages/HelloWorld.dll
     - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
     - docker pull ghcr.io/bayrakmustafa/codesigner:latest
     - docker run -i --rm --dns 8.8.8.8 --network host --volume ${CI_PROJECT_DIR}/packages:/codesign/examples --volume ${CI_PROJECT_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.dll -output_dir_path=/codesign/output
