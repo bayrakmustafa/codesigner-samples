@@ -70,9 +70,6 @@ build-gradle-exe:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   before_script:
     - mkdir -p ${CI_PROJECT_DIR}/artifacts
-    - mkdir -p ${CI_PROJECT_DIR}/packages
-    - GRADLE_USER_HOME="$(pwd)/.gradle"
-    - export GRADLE_USER_HOME
     - choco install oraclejdk --version=17.0.2
     - choco install gradle --version=7.4
     - choco install wixtoolset --version=3.11.2
@@ -95,8 +92,6 @@ build-gradle-msi:
   before_script:
     - mkdir -p ${CI_PROJECT_DIR}/artifacts
     - mkdir -p ${CI_PROJECT_DIR}/packages
-    - GRADLE_USER_HOME="$(pwd)/.gradle"
-    - export GRADLE_USER_HOME
     - choco install oraclejdk --version=17.0.2
     - choco install gradle --version=7.4
     - choco install wixtoolset --version=3.11.2
