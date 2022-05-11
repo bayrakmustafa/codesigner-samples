@@ -17,7 +17,7 @@ build-dotnet:
   script:
     - dotnet build dotnet/${PROJECT_NAME}.csproj -c Release
     - cp dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.dll
-  artifacts:
+  cache:
     paths:
       - ${CI_PROJECT_DIR}/packages/HelloWorld.dll
     expire_in: 10 minutes
@@ -35,7 +35,7 @@ build-maven-jar:
   script:
     - mvn $MAVEN_CLI_OPTS clean install -f java/pom.xml
     - cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
-  artifacts:
+  cache:
     paths:
       - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
     expire_in: 10 minutes
@@ -53,7 +53,7 @@ build-gradle-jar:
   script:
     - gradle clean build -p java -PsetupType=jar
     - cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
-  artifacts:
+  cache:
     paths:
       - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
     expire_in: 10 minutes
