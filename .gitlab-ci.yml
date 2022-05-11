@@ -77,7 +77,7 @@ build-gradle-exe:
     - Set-Content ${CI_PROJECT_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
   script:
     - gradle build jpackage -x test --warning-mode all -p java -PsetupType=exe
-    - cp java/build/release/windows/*.exe ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.exe
+    - Copy-Item "java/build/release/windows/*.exe" -Destination "${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.exe"
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.exe
@@ -99,7 +99,7 @@ build-gradle-msi:
     - Set-Content ${CI_PROJECT_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
   script:
     - gradle build jpackage -x test --warning-mode all -p java -PsetupType=msi
-    - cp java/build/release/windows/*.msi ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.msi
+    - Copy-Item "java/build/release/windows/*.msi" -Destination "${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.msi"
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.msi
@@ -169,3 +169,45 @@ sign-gradle-artifacts:
     expire_in: 1 days
   dependencies:
     - build-gradle-jar
+
+sign-gradle-msi-artifacts:
+  stage: sign
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
+  variables:
+    COMMAND: "sign"
+  before_script:
+    - mkdir -p ${CI_PROJECT_DIR}/artifacts
+    - mkdir -p ${CI_PROJECT_DIR}/packages
+  script:
+    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+    - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+    - docker run -i --rm --dns 8.8.8.8 --network host --volume ${CI_PROJECT_DIR}/packages:/codesign/examples --volume ${CI_PROJECT_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.msi -output_dir_path=/codesign/output
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/artifacts/${PROJECT_NAME}.msi
+    expire_in: 1 days
+  dependencies:
+    - build-gradle-msi
+
+sign-gradle-exe-artifacts:
+  stage: sign
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
+  variables:
+    COMMAND: "sign"
+  before_script:
+    - mkdir -p ${CI_PROJECT_DIR}/artifacts
+    - mkdir -p ${CI_PROJECT_DIR}/packages
+  script:
+    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+    - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+    - docker run -i --rm --dns 8.8.8.8 --network host --volume ${CI_PROJECT_DIR}/packages:/codesign/examples --volume ${CI_PROJECT_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.exe -output_dir_path=/codesign/output
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/artifacts/${PROJECT_NAME}.exe
+    expire_in: 1 days
+  dependencies:
+    - build-gradle-exe
