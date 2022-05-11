@@ -20,7 +20,6 @@ build-dotnet:
   cache:
     paths:
       - ${CI_PROJECT_DIR}/packages/HelloWorld.dll
-    expire_in: 10 minutes
 
 build-maven-jar:
   stage: build
@@ -38,7 +37,6 @@ build-maven-jar:
   cache:
     paths:
       - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
-    expire_in: 10 minutes
 
 build-gradle-jar:
   stage: build
@@ -56,7 +54,6 @@ build-gradle-jar:
   cache:
     paths:
       - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
-    expire_in: 10 minutes
 
 sign-dotnet-artifacts:
   stage: sign
