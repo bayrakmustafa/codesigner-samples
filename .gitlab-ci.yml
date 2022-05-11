@@ -74,6 +74,7 @@ build-gradle-exe:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8"
   before_script:
     - mkdir -p ${CI_PROJECT_DIR}/artifacts
+    - mkdir -p ${CI_PROJECT_DIR}/packages
     - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
     - choco feature enable -n allowGlobalConfirmation
     - choco install dotnet3.5 --version=3.5.20160716 -y
