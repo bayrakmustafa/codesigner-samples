@@ -67,11 +67,12 @@ build-gradle-jar:
 build-gradle-exe:
   stage: build
   extends:
-  - .windows_runners
+    - .windows_runners
   variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   before_script:
     - mkdir -p ${CI_PROJECT_DIR}/artifacts
+    - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
     - choco feature enable -n allowGlobalConfirmation
     - choco install dotnet3.5 --version=3.5.20160716 -y
     - choco install oraclejdk --version=17.0.2 -y
@@ -90,12 +91,13 @@ build-gradle-exe:
 build-gradle-msi:
   stage: build
   extends:
-  - .windows_runners
+    - .windows_runners
   variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   before_script:
     - mkdir -p ${CI_PROJECT_DIR}/artifacts
     - mkdir -p ${CI_PROJECT_DIR}/packages
+    - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
     - choco feature enable -n allowGlobalConfirmation
     - choco install dotnet3.5 --version=3.5.20160716 -y
     - choco install oraclejdk --version=17.0.2 -y
