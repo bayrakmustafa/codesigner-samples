@@ -1,3 +1,7 @@
+.windows_runners:
+  tags:
+  - windows
+
 stages:
   - build
   - sign
@@ -17,9 +21,10 @@ build-dotnet:
   script:
     - dotnet build dotnet/${PROJECT_NAME}.csproj -c Release
     - cp dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.dll
-  cache:
+  artifacts:
     paths:
       - ${CI_PROJECT_DIR}/packages/HelloWorld.dll
+    expire_in: 5 minutes
 
 build-maven-jar:
   stage: build
@@ -34,9 +39,10 @@ build-maven-jar:
   script:
     - mvn $MAVEN_CLI_OPTS clean install -f java/pom.xml
     - cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
-  cache:
+  artifacts:
     paths:
       - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
+    expire_in: 5 minutes
 
 build-gradle-jar:
   stage: build
@@ -51,9 +57,58 @@ build-gradle-jar:
   script:
     - gradle clean build -p java -PsetupType=jar
     - cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
-  cache:
+  artifacts:
     paths:
       - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
+    expire_in: 5 minutes
+
+build-gradle-exe:
+  stage: build
+  extends:
+  - .windows_runners
+  variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  before_script:
+    - mkdir -p ${CI_PROJECT_DIR}/artifacts
+    - mkdir -p ${CI_PROJECT_DIR}/packages
+    - GRADLE_USER_HOME="$(pwd)/.gradle"
+    - export GRADLE_USER_HOME
+    - choco install oraclejdk --version=17.0.2
+    - choco install gradle --version=7.4
+    - choco install wixtoolset --version=3.11.2
+    - New-Item ${CI_PROJECT_DIR}/java/gradle.properties
+    - Set-Content ${CI_PROJECT_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
+  script:
+    - gradle build jpackage -x test --warning-mode all -p java -PsetupType=exe
+    - cp java/build/release/windows/*.exe ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.exe
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.exe
+    expire_in: 5 minutes
+
+build-gradle-msi:
+  stage: build
+  extends:
+  - .windows_runners
+  variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  before_script:
+    - mkdir -p ${CI_PROJECT_DIR}/artifacts
+    - mkdir -p ${CI_PROJECT_DIR}/packages
+    - GRADLE_USER_HOME="$(pwd)/.gradle"
+    - export GRADLE_USER_HOME
+    - choco install oraclejdk --version=17.0.2
+    - choco install gradle --version=7.4
+    - choco install wixtoolset --version=3.11.2
+    - New-Item ${CI_PROJECT_DIR}/java/gradle.properties
+    - Set-Content ${CI_PROJECT_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
+  script:
+    - gradle build jpackage -x test --warning-mode all -p java -PsetupType=msi
+    - cp java/build/release/windows/*.msi ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.msi
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.msi
+    expire_in: 5 minutes
 
 sign-dotnet-artifacts:
   stage: sign
