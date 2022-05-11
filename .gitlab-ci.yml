@@ -69,7 +69,9 @@ build-gradle-exe:
   extends:
     - .windows_runners
   variables:
-    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    JVM_OPTS: -Xmx3200m
+    TERM: dumb
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8"
   before_script:
     - mkdir -p ${CI_PROJECT_DIR}/artifacts
     - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
@@ -93,7 +95,9 @@ build-gradle-msi:
   extends:
     - .windows_runners
   variables:
-    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    JVM_OPTS: -Xmx3200m
+    TERM: dumb
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8"
   before_script:
     - mkdir -p ${CI_PROJECT_DIR}/artifacts
     - mkdir -p ${CI_PROJECT_DIR}/packages
