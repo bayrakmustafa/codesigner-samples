@@ -89,7 +89,7 @@ sign-maven-artifacts:
   before_script:
     - mkdir -p ${CI_PROJECT_DIR}/artifacts
     - mkdir -p ${CI_PROJECT_DIR}/packages
-    - cp ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar ${CI_PROJECT_DIR}/artifacts/${PROJECT_NAME}-Maven.jar
+    - cp ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}-Maven.jar
   script:
     - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
     - docker pull ghcr.io/bayrakmustafa/codesigner:latest
@@ -111,7 +111,7 @@ sign-gradle-artifacts:
   before_script:
     - mkdir -p ${CI_PROJECT_DIR}/artifacts
     - mkdir -p ${CI_PROJECT_DIR}/packages
-    - cp ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar ${CI_PROJECT_DIR}/artifacts/${PROJECT_NAME}-Gradle.jar
+    - cp ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}-Gradle.jar
   script:
     - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
     - docker pull ghcr.io/bayrakmustafa/codesigner:latest
