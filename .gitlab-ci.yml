@@ -224,3 +224,23 @@ sign-gradle-exe-artifacts:
     expire_in: 1 days
   dependencies:
     - build-gradle-exe
+
+sign-ps1-artifacts:
+  stage: sign
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
+  variables:
+    COMMAND: "sign"
+  before_script:
+    - mkdir -p ${CI_PROJECT_DIR}/artifacts
+    - mkdir -p ${CI_PROJECT_DIR}/packages
+    - cp powershell/${PROJECT_NAME}.ps1 ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.ps1
+  script:
+    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+    - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+    - docker run -i --rm --dns 8.8.8.8 --network host --volume ${CI_PROJECT_DIR}/packages:/codesign/examples --volume ${CI_PROJECT_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.ps1 -output_dir_path=/codesign/output
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/artifacts/${PROJECT_NAME}.ps1
+    expire_in: 1 days
