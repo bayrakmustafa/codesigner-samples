@@ -2,6 +2,7 @@
 
 [![GitHub Actions Status](https://github.com/bayrakmustafa/codesigner-samples/workflows/CodeSignTool/badge.svg)](https://github.com/bayrakmustafa/codesigner-samples)
 [![CircleCI](https://circleci.com/gh/bayrakmustafa/codesigner-samples/tree/main.svg?style=shield)](https://circleci.com/gh/bayrakmustafa/codesigner-samples/tree/main)
+[![GitlabCI](https://gitlab.com/mustafabayrak/codesigner-samples/badges/main/pipeline.svg?key_text=Gitlab%20CI)](https://gitlab.com/mustafabayrak/codesigner-samples/-/commits/main)
 
 CodeSignTool is a secure, privacy-oriented multi-platform Java command line utility for remotely signing Microsoft Authenticode and Java code objects with eSigner EV code signing certificates. Hashes of the files are sent to SSL.com for signing so that the code itself is not sent. This is ideal where sensitive files need to be signed, but should not be sent over the wire for signing. CodeSignTool is also ideal for automated batch processes for high volume signings or integration into existing CI/CD pipeline workflows.
 
