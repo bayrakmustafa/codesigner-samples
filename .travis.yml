@@ -1,3 +1,5 @@
+dist: xenial
+
 language: csharp
 mono: none
 dotnet: 3.1.419
@@ -6,9 +8,10 @@ services:
   - docker
 
 env:
-  - PROJECT_NAME="HelloWorld"
-  - PROJECT_VERSION="0.0.1"
-  - DOTNET_VERSION="3.1"
+  global:
+    - PROJECT_NAME="HelloWorld"
+    - PROJECT_VERSION="0.0.1"
+    - DOTNET_VERSION="3.1"
 
 jobs:
   include:
@@ -22,5 +25,7 @@ jobs:
       script:
         # Build dotnet project with Release configuration
         - dotnet build dotnet/${PROJECT_NAME}.csproj -c Release
+
+      after_success:
         # Copy built artifacts to artifacts directory
         - cp dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.dll
