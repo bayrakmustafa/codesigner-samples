@@ -1,3 +1,6 @@
+# The CPU Architecture to run the job on
+arch: amd64
+
 # Defines environment variables globally. Job level property overrides global variables
 env:
   global:
@@ -9,12 +12,14 @@ jobs:
   include:
     - stage: build-dotnet
       # The Ubuntu distribution to use
-      dist: xenial
+      dist: bionic
       # Use docker command for signing   
       services:
         - docker
       # Use dotnet-cli to build the project
       language: csharp
+      # Disable mono installation
+      mono: none
       # Dotnet version to build the project
       dotnet: 3.1.419
       # Before script to run before building the project
@@ -34,4 +39,38 @@ jobs:
           name: artifacts
           paths:
             # Save artifact in order to use signing job
-            - dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll
+            - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.dll
+
+    - stage: build-maven-jar
+      # The Ubuntu distribution to use
+      dist: bionic
+      # Use docker command for signing   
+      services:
+        - docker
+      # Use dotnet-cli to build the project
+      language: java
+      # Java version to build the project
+      jdk: 
+      - oraclejdk17
+      # Cache m2 directory in order to speed up
+      cache:
+        directories:
+        - $HOME/.m2
+      # Before script to run before building the project
+      before_script: 
+        # Created directories for artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+      # Script to build the project
+      script: 
+        # Build Maven project with Maven Options
+        - mvn clean install -f java/pom.xml
+         # Copy built artifacts to artifacts directory
+        - cp java/target/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        create:
+          name: artifacts
+          paths:
+            # Save artifact in order to use signing job
+            - ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar
