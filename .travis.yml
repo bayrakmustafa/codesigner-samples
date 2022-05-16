@@ -1,12 +1,4 @@
-dist: xenial
-
-language: csharp
-mono: none
-dotnet: 3.1.419
-
-services:
-  - docker
-
+# Defines environment variables globally. Job level property overrides global variables
 env:
   global:
     - PROJECT_NAME="HelloWorld"
@@ -15,14 +7,23 @@ env:
 
 jobs:
   include:
-    - stage: Create Artifacts Directory
-      script: 
+    - stage: build-dotnet
+      # The Ubuntu distribution to use
+      dist: xenial
+      # Use docker command for signing   
+      services:
+        - docker
+      # Use dotnet-cli to build the project
+      language: csharp
+      # Dotnet version to build the project
+      dotnet: 3.1.419
+      # Before script to run before building the project
+      before_script: 
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
-
-    - stage: Compile Dotnet Library with Dotnet Core
-      script:
+      # Script to build the project
+      script: 
         # Build dotnet project with Release configuration
         - dotnet build dotnet/${PROJECT_NAME}.csproj -c Release
          # Copy built artifacts to artifacts directory
