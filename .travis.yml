@@ -25,7 +25,12 @@ jobs:
       script:
         # Build dotnet project with Release configuration
         - dotnet build dotnet/${PROJECT_NAME}.csproj -c Release
-
-      after_success:
-        # Copy built artifacts to artifacts directory
+         # Copy built artifacts to artifacts directory
         - cp dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.dll
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        create:
+          name: artifacts
+          paths:
+            # Save artifact in order to use signing job
+            - dotnet/bin/Release/netcoreapp${DOTNET_VERSION}/${PROJECT_NAME}-${PROJECT_VERSION}.dll
