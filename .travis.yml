@@ -99,11 +99,11 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Set GRADLE options for building Java project
-        - export GRADLE_OPTS="-Dorg.gradle.daemon=true -Dorg.gradle.workers.max=4"
+        - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
       # Script to build the project
       script: 
         # Build Maven project with Maven Options
-        - gradle clean build -p java -PsetupType=jar
+        - gradle clean build -p java -PsetupType=jar --no-daemon
          # Copy built artifacts to artifacts directory
         - cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.jar
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
@@ -136,7 +136,7 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Set GRADLE home for building Java project
-        - export GRADLE_OPTS="-Dorg.gradle.daemon=true -Dorg.gradle.workers.max=4"
+        - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
         # Enable .NET Framework Core for building .NET project with WIX
         - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
         # Enable global confirmation for choco package installation
@@ -155,7 +155,7 @@ jobs:
       # Script to build the project
       script: 
         # Build Gradle project for EXE artifact with jpackage
-        - gradle build jpackage -x test --warning-mode all -p java -PsetupType=exe
+        - gradle build jpackage -x test --warning-mode all -p java -PsetupType=exe --no-daemon
         # Copy built artifacts to artifacts directory
         - Copy-Item "java/build/release/windows/*.exe" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe"
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
@@ -188,7 +188,7 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Set GRADLE home for building Java project
-        - export GRADLE_OPTS="-Dorg.gradle.daemon=true -Dorg.gradle.workers.max=4"
+        - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
         # Enable .NET Framework Core for building .NET project with WIX
         - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
         # Enable global confirmation for choco package installation
@@ -207,7 +207,7 @@ jobs:
       # Script to build the project
       script: 
         # Build Gradle project for MSI artifact with jpackage
-        - gradle build jpackage -x test --warning-mode all -p java -PsetupType=f
+        - gradle build jpackage -x test --warning-mode all -p java -PsetupType=msi --no-daemon
         # Copy built artifacts to artifacts directory
         - Copy-Item "java/build/release/windows/*.msi" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi"
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
