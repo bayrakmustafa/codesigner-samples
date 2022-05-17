@@ -100,10 +100,13 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Set GRADLE options for building Java project
         - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
+        - touch ${TRAVIS_BUILD_DIR}/java/gradle.properties
+        - echo "${TRAVIS_BUILD_DIR}/java/gradle.properties" >> 'org.gradle.daemon=false'
+        - echo "${TRAVIS_BUILD_DIR}/java/gradle.properties" >> 'org.gradle.workers.max=4'
       # Script to build the project
       script: 
-        # Build Maven project with Maven Options
-        - gradle clean build -p java -PsetupType=jar --no-daemon
+        # Build Gradle project for Jar artifact
+        - gradle clean build -p java -PsetupType=jar
          # Copy built artifacts to artifacts directory
         - cp java/build/libs/${PROJECT_NAME}-${PROJECT_VERSION}.jar ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.jar
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
@@ -152,6 +155,8 @@ jobs:
         # Set Default JDK version for Gradle Build
         - New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
         - Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
+        - Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.daemon=false'
+        - Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.workers.max=4'
       # Script to build the project
       script: 
         # Build Gradle project for EXE artifact with jpackage
@@ -204,6 +209,8 @@ jobs:
         # Set Default JDK version for Gradle Build
         - New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
         - Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
+        - Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.daemon=false'
+        - Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.workers.max=4'
       # Script to build the project
       script: 
         # Build Gradle project for MSI artifact with jpackage
