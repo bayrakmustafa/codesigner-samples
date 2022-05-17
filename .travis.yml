@@ -88,17 +88,18 @@ jobs:
       # Java version to build the project
       jdk: 
       - oraclejdk17
-      # Cache m2 directory in order to speed up
+      # Cache gradle directory in order to speed up
       cache:
         directories:
-        - $HOME/.m2
+        - "$HOME/.gradle/caches/"
+        - "$HOME/.gradle/wrapper/"
       # Before script to run before building the project
       before_script: 
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
-        # Set GRADLE home for building Java project
-        - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8"
+        # Set GRADLE options for building Java project
+        - export GRADLE_OPTS="-Dorg.gradle.daemon=true -Dorg.gradle.workers.max=4"
       # Script to build the project
       script: 
         # Build Maven project with Maven Options
@@ -124,17 +125,18 @@ jobs:
       # Java version to build the project
       jdk: 
       - oraclejdk17
-      # Cache m2 directory in order to speed up
+      # Cache gradle directory in order to speed up
       cache:
         directories:
-        - $HOME/.m2
+        - "$HOME/.gradle/caches/"
+        - "$HOME/.gradle/wrapper/"
       # Before script to run before building the project
       before_script: 
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Set GRADLE home for building Java project
-        - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8"
+        - export GRADLE_OPTS="-Dorg.gradle.daemon=true -Dorg.gradle.workers.max=4"
         # Enable .NET Framework Core for building .NET project with WIX
         - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
         # Enable global confirmation for choco package installation
@@ -175,17 +177,18 @@ jobs:
       # Java version to build the project
       jdk: 
       - oraclejdk17
-      # Cache m2 directory in order to speed up
+      # Cache gradle directory in order to speed up
       cache:
         directories:
-        - $HOME/.m2
+        - "$HOME/.gradle/caches/"
+        - "$HOME/.gradle/wrapper/"
       # Before script to run before building the project
       before_script: 
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Set GRADLE home for building Java project
-        - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8"
+        - export GRADLE_OPTS="-Dorg.gradle.daemon=true -Dorg.gradle.workers.max=4"
         # Enable .NET Framework Core for building .NET project with WIX
         - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
         # Enable global confirmation for choco package installation
