@@ -62,7 +62,7 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Set Maven build options
-        - export MAVEN_CLI_OPTS=--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true
+        - export MAVEN_CLI_OPTS="--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
       # Script to build the project
       script: 
         # Build Maven project with Maven Options
@@ -98,7 +98,7 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Set GRADLE home for building Java project
-        - export GRADLE_OPTS=-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8
+        - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8"
       # Script to build the project
       script: 
         # Build Maven project with Maven Options
@@ -112,3 +112,105 @@ jobs:
           paths:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.jar
+
+    - stage: build-gradle-exe
+      # The operating system to run the job on
+      os: windows
+      # Use docker command for signing   
+      services:
+        - docker
+      # Use dotnet-cli to build the project
+      language: java
+      # Java version to build the project
+      jdk: 
+      - oraclejdk17
+      # Cache m2 directory in order to speed up
+      cache:
+        directories:
+        - $HOME/.m2
+      # Before script to run before building the project
+      before_script: 
+        # Created directories for artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # Set GRADLE home for building Java project
+        - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8"
+        # Enable .NET Framework Core for building .NET project with WIX
+        - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
+        # Enable global confirmation for choco package installation
+        - choco feature enable -n allowGlobalConfirmation
+        # Install Dotnet3.5
+        - choco install dotnet3.5 --version=3.5.20160716 -y
+        # Install Oracle JDK 17.0.2
+        - choco install oraclejdk --version=17.0.2 -y
+        # Install Gradle 7.4
+        - choco install gradle --version=7.4 -y
+        # Install WIX 3.11.2
+        - choco install wixtoolset --version=3.11.2 -y
+        # Set Default JDK version for Gradle Build
+        - New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
+        - Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
+      # Script to build the project
+      script: 
+        # Build Gradle project for EXE artifact with jpackage
+        - gradle build jpackage -x test --warning-mode all -p java -PsetupType=exe
+        # Copy built artifacts to artifacts directory
+        - Copy-Item "java/build/release/windows/*.exe" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe"
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        create:
+          name: artifacts
+          paths:
+            # Save artifact in order to use signing job
+            - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
+
+    - stage: build-gradle-msi
+      # The operating system to run the job on
+      os: windows
+      # Use docker command for signing   
+      services:
+        - docker
+      # Use dotnet-cli to build the project
+      language: java
+      # Java version to build the project
+      jdk: 
+      - oraclejdk17
+      # Cache m2 directory in order to speed up
+      cache:
+        directories:
+        - $HOME/.m2
+      # Before script to run before building the project
+      before_script: 
+        # Created directories for artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # Set GRADLE home for building Java project
+        - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=8"
+        # Enable .NET Framework Core for building .NET project with WIX
+        - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
+        # Enable global confirmation for choco package installation
+        - choco feature enable -n allowGlobalConfirmation
+        # Install Dotnet3.5
+        - choco install dotnet3.5 --version=3.5.20160716 -y
+        # Install Oracle JDK 17.0.2
+        - choco install oraclejdk --version=17.0.2 -y
+        # Install Gradle 7.4
+        - choco install gradle --version=7.4 -y
+        # Install WIX 3.11.2
+        - choco install wixtoolset --version=3.11.2 -y
+        # Set Default JDK version for Gradle Build
+        - New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
+        - Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
+      # Script to build the project
+      script: 
+        # Build Gradle project for MSI artifact with jpackage
+        - gradle build jpackage -x test --warning-mode all -p java -PsetupType=f
+        # Copy built artifacts to artifacts directory
+        - Copy-Item "java/build/release/windows/*.msi" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi"
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        create:
+          name: artifacts
+          paths:
+            # Save artifact in order to use signing job
+            - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
