@@ -98,6 +98,12 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # Install Gradle 7.4
+        - wget http://services.gradle.org/distributions/gradle-7.4-bin.zip
+        - unzip -qq gradle-7.4-bin.zip
+        - export GRADLE_HOME=$PWD/gradle-7.4
+        - export PATH=$GRADLE_HOME/bin:$PATH
+        - gradle -v
         # Set GRADLE options for building Java project
         - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
         - touch ${TRAVIS_BUILD_DIR}/java/gradle.properties
