@@ -124,8 +124,8 @@ jobs:
       # Use docker command for signing   
       services:
         - docker
-      # Use default generic lang
-      language: generic
+      # Use default minimal lang
+      language: minimal
       # Cache gradle directory in order to speed up
       cache:
         directories:
@@ -175,8 +175,8 @@ jobs:
       # Use docker command for signing   
       services:
         - docker
-      # Use default generic lang
-      language: generic
+      # Use default minimal lang
+      language: minimal
       # Cache gradle directory in order to speed up
       cache:
         directories:
