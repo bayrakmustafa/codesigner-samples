@@ -88,7 +88,7 @@ jobs:
       language: java
       # Java version to build the project
       jdk: 
-      - oraclejdk17
+      - oraclejdk11
       # Cache gradle directory in order to speed up
       cache:
         directories:
