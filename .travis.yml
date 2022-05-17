@@ -124,12 +124,6 @@ jobs:
       # Use docker command for signing   
       services:
         - docker
-      # Use dotnet-cli to build the project
-      language: java
-      # Java version to build the project
-      jdk: 
-      - oraclejdk17
-      # Cache gradle directory in order to speed up
       cache:
         directories:
         - "$HOME/.gradle/caches/"
@@ -178,11 +172,6 @@ jobs:
       # Use docker command for signing   
       services:
         - docker
-      # Use dotnet-cli to build the project
-      language: java
-      # Java version to build the project
-      jdk: 
-      - oraclejdk17
       # Cache gradle directory in order to speed up
       cache:
         directories:
