@@ -136,8 +136,11 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
-        # Set GRADLE home for building Java project
+        # Set GRADLE HOME for building Java project
         - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
+        # Set JAVA HOME for building Java project
+        - export JAVA_HOME=${JAVA_HOME:-/c/java/jdk}
+        - export PATH=${JAVA_HOME}/bin:${PATH}
         # Enable .NET Framework Core for building .NET project with WIX
         - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
         # Enable global confirmation for choco package installation
@@ -145,14 +148,14 @@ jobs:
         # Install Dotnet3.5
         - choco install dotnet3.5 --version=3.5.20160716 -y
         # Install Oracle JDK 17.0.2
-        - choco install oraclejdk --version=17.0.2 -y
+        - choco install oraclejdk --version=17.0.2 -params 'installdir=c:\\java\\jdk' -y
         # Install Gradle 7.4
         - choco install gradle --version=7.4 -y
         # Install WIX 3.11.2
         - choco install wixtoolset --version=3.11.2 -y
         # Set Default JDK version for Gradle Build
         - powershell.exe -ExecutionPolicy Bypass New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
-        - powershell.exe -ExecutionPolicy Bypass Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties "org.gradle.java.home=C:/PROGRA~1/Java/jdk-17.0.2"
+        - powershell.exe -ExecutionPolicy Bypass Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties "org.gradle.java.home=c:/java/jdk"
         - powershell.exe -ExecutionPolicy Bypass Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties "org.gradle.daemon=false"
         - powershell.exe -ExecutionPolicy Bypass Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties "org.gradle.workers.max=4"
       # Script to build the project
@@ -160,7 +163,7 @@ jobs:
         # Build Gradle project for EXE artifact with jpackage
         - gradle build jpackage -x test --warning-mode all -p java -PsetupType=exe --no-daemon
         # Copy built artifacts to artifacts directory
-        - Copy-Item "java/build/release/windows/*.exe" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe"
+        - powershell.exe -ExecutionPolicy Bypass Copy-Item "java/build/release/windows/*.exe" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe"
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         create:
@@ -189,6 +192,9 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Set GRADLE home for building Java project
         - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
+        # Set JAVA HOME for building Java project
+        - export JAVA_HOME=${JAVA_HOME:-/c/java/jdk}
+        - export PATH=${JAVA_HOME}/bin:${PATH}
         # Enable .NET Framework Core for building .NET project with WIX
         - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
         # Enable global confirmation for choco package installation
@@ -196,14 +202,14 @@ jobs:
         # Install Dotnet3.5
         - choco install dotnet3.5 --version=3.5.20160716 -y
         # Install Oracle JDK 17.0.2
-        - choco install oraclejdk --version=17.0.2 -y
+        - choco install oraclejdk --version=17.0.2 -params 'installdir=c:\\java\\jdk' -y
         # Install Gradle 7.4
         - choco install gradle --version=7.4 -y
         # Install WIX 3.11.2
         - choco install wixtoolset --version=3.11.2 -y
         # Set Default JDK version for Gradle Build
         - powershell.exe -ExecutionPolicy Bypass New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
-        - powershell.exe -ExecutionPolicy Bypass Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties "org.gradle.java.home=C:/PROGRA~1/Java/jdk-17.0.2"
+        - powershell.exe -ExecutionPolicy Bypass Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties "org.gradle.java.home=c:/java/jdk"
         - powershell.exe -ExecutionPolicy Bypass Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties "org.gradle.daemon=false"
         - powershell.exe -ExecutionPolicy Bypass Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties "org.gradle.workers.max=4"
       # Script to build the project
@@ -211,7 +217,7 @@ jobs:
         # Build Gradle project for MSI artifact with jpackage
         - gradle build jpackage -x test --warning-mode all -p java -PsetupType=msi --no-daemon
         # Copy built artifacts to artifacts directory
-        - Copy-Item "java/build/release/windows/*.msi" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi"
+        - powershell.exe -ExecutionPolicy Bypass Copy-Item "java/build/release/windows/*.msi" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi"
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         create:
