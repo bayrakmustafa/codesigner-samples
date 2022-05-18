@@ -151,10 +151,10 @@ jobs:
         # Install WIX 3.11.2
         - choco install wixtoolset --version=3.11.2 -y
         # Set Default JDK version for Gradle Build
-        - New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
-        - Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
-        - Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.daemon=false'
-        - Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.workers.max=4'
+        - powershell.exe -ExecutionPolicy Bypass New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
+        - powershell.exe -ExecutionPolicy Bypass Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
+        - powershell.exe -ExecutionPolicy Bypass Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.daemon=false'
+        - powershell.exe -ExecutionPolicy Bypass Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.workers.max=4'
       # Script to build the project
       script: 
         # Build Gradle project for EXE artifact with jpackage
@@ -202,10 +202,10 @@ jobs:
         # Install WIX 3.11.2
         - choco install wixtoolset --version=3.11.2 -y
         # Set Default JDK version for Gradle Build
-        - New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
-        - Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
-        - Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.daemon=false'
-        - Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.workers.max=4'
+        - powershell.exe -ExecutionPolicy Bypass New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
+        - powershell.exe -ExecutionPolicy Bypass Set-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.java.home=C:/Program Files/Java/jdk-17.0.2'
+        - powershell.exe -ExecutionPolicy Bypass Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.daemon=false'
+        - powershell.exe -ExecutionPolicy Bypass Add-Content ${TRAVIS_BUILD_DIR}/java/gradle.properties 'org.gradle.workers.max=4'
       # Script to build the project
       script: 
         # Build Gradle project for MSI artifact with jpackage
