@@ -8,9 +8,12 @@ env:
     - PROJECT_VERSION="0.0.1"
     - DOTNET_VERSION="3.1"
     - TERM=dumb
+    - ENVIRONMENT_NAME="TEST"
 
+# Specifies the order of build stages. All jobs in one stage must complete before next stage is executed.
 stages:
   - build
+  - sign
 
 jobs:
   include:
@@ -238,3 +241,41 @@ jobs:
           paths:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
+
+    - stage: sign
+      # The job name
+      name: sign-dotnet-artifacts
+      # The Ubuntu distribution to use
+      dist: bionic
+      # Use docker command for signing   
+      services:
+        - docker
+      # Defines environment variables for specific jobs.
+      env:
+        COMMAND="sign"
+      # Use dotnet-cli to build the project
+      language: csharp
+      # Disable mono installation
+      mono: none
+      # Dotnet version to build the project
+      dotnet: 3.1.419
+      # Before script to run before building the project
+      before_script: 
+        # Created directories for artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+      # Script to build the project
+      script: 
+        # Docker Login If docker repositoru is private
+        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+        # Docker Pull CodeSigner Docker Image
+        - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+        # Sign artifact with CodeSigner docker image
+        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${TRAVIS_BUILD_DIR}/packages:/codesign/examples --volume ${TRAVIS_BUILD_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.dll -output_dir_path=/codesign/output
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        create:
+          name: artifacts
+          paths:
+            # Save artifact in order to use signing job
+            - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.dll
