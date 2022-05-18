@@ -45,7 +45,7 @@ jobs:
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         create:
-          name: artifacts
+          name: dotnet-artifacts
           paths:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.dll
@@ -83,7 +83,7 @@ jobs:
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         create:
-          name: artifacts
+          name: maven-jar-artifacts
           paths:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.jar
@@ -125,7 +125,7 @@ jobs:
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         create:
-          name: artifacts
+          name: gradle-jar-artifacts
           paths:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.jar
@@ -181,7 +181,7 @@ jobs:
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         create:
-          name: artifacts
+          name: gradle-exe-artifacts
           paths:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
@@ -237,7 +237,7 @@ jobs:
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         create:
-          name: artifacts
+          name: gradle-msi-artifacts
           paths:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
@@ -274,8 +274,10 @@ jobs:
         - docker run -i --rm --dns 8.8.8.8 --network host --volume ${TRAVIS_BUILD_DIR}/packages:/codesign/examples --volume ${TRAVIS_BUILD_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.dll -output_dir_path=/codesign/output
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
+        use:
+          - dotnet-artifacts
         create:
           name: artifacts
           paths:
-            # Save artifact in order to use signing job
+            # Save signed artifact
             - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.dll
