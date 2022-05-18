@@ -9,9 +9,14 @@ env:
     - DOTNET_VERSION="3.1"
     - TERM=dumb
 
+stages:
+  - build
+
 jobs:
   include:
-    - stage: build-dotnet
+    - stage: build
+      # The job name
+      name: build-dotnet
       # The Ubuntu distribution to use
       dist: bionic
       # Use docker command for signing   
@@ -42,7 +47,9 @@ jobs:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.dll
 
-    - stage: build-maven-jar
+    - stage: build
+      # The job name
+      name: build-maven-jar
       # The Ubuntu distribution to use
       dist: bionic
       # Use docker command for signing   
@@ -78,7 +85,9 @@ jobs:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.jar
 
-    - stage: build-gradle-jar
+    - stage: build
+      # The job name
+      name: build-gradle-jar
       # The Ubuntu distribution to use
       dist: bionic
       # Use docker command for signing   
@@ -118,7 +127,9 @@ jobs:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.jar
 
-    - stage: build-gradle-exe
+    - stage: build
+      # The job name
+      name: build-gradle-exe
       # The operating system to run the job on
       os: windows
       # Use docker command for signing   
@@ -172,7 +183,9 @@ jobs:
             # Save artifact in order to use signing job
             - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
 
-    - stage: build-gradle-msi
+    - stage: build
+      # The job name
+      name: build-gradle-msi
       # The operating system to run the job on
       os: windows
       # Use docker command for signing   
