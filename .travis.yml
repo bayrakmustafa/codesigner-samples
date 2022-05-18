@@ -151,10 +151,7 @@ jobs:
         # Install WIX 3.11.2
         - choco install wixtoolset --version=3.11.2 -y
         # Set JAVA HOME for building Java project
-        - JAVA_EXE=$(powershell -NonInteractive -Command '$env:PATH=[Environment]::GetEnvironmentVariable("PATH","Machine"); Write((Get-Command java).Path)')
-        - JAVA_EXE=$(cygpath "$JAVA_EXE")
-        - echo $JAVA_EXE
-        - export JAVA_HOME="${JAVA_EXE%/bin/*}"
+        - export JAVA_HOME="C:/PROGRA~1/Java/jdk-17.0.2"
         - export PATH="$JAVA_HOME/bin:$PATH"
         # Set Default JDK version for Gradle Build
         - powershell.exe -ExecutionPolicy Bypass New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
@@ -208,10 +205,7 @@ jobs:
         # Install WIX 3.11.2
         - choco install wixtoolset --version=3.11.2 -y
         # Set JAVA HOME for building Java project
-        - JAVA_EXE=$(powershell -NonInteractive -Command '$env:PATH=[Environment]::GetEnvironmentVariable("PATH","Machine"); Write((Get-Command java).Path)')
-        - JAVA_EXE=$(cygpath "$JAVA_EXE")
-        - echo $JAVA_EXE
-        - export JAVA_HOME="${JAVA_EXE%/bin/*}"
+        - export JAVA_HOME="C:/PROGRA~1/Java/jdk-17.0.2"
         - export PATH="$JAVA_HOME/bin:$PATH"
         # Set Default JDK version for Gradle Build
         - powershell.exe -ExecutionPolicy Bypass New-Item ${TRAVIS_BUILD_DIR}/java/gradle.properties
