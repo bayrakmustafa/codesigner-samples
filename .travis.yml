@@ -193,7 +193,7 @@ jobs:
           name: gradle-exe-artifacts
           paths:
             # Save artifact in order to use signing job
-            - packages/${PROJECT_NAME}.exe
+            - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
 
     - stage: build
       # The job name
@@ -249,7 +249,7 @@ jobs:
           name: gradle-msi-artifacts
           paths:
             # Save artifact in order to use signing job
-            - packages/${PROJECT_NAME}.msi
+            - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
 
     - stage: sign
       # The job name
@@ -273,6 +273,8 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # List to be signed artifact
+        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -312,6 +314,8 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # List to be signed artifact
+        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -351,6 +355,8 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # List to be signed artifact
+        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -390,6 +396,8 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # List to be signed artifact
+        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -429,6 +437,8 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # List to be signed artifact
+        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
