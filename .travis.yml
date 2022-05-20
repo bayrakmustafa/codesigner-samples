@@ -277,7 +277,204 @@ jobs:
         use:
           - dotnet-artifacts
         create:
-          name: artifacts
+          name: dotnet-signed-artifacts
           paths:
             # Save signed artifact
             - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.dll
+
+    - stage: sign
+      # The job name
+      name: sign-maven-artifacts
+      # The Ubuntu distribution to use
+      dist: bionic
+      # Use docker command for signing   
+      services:
+        - docker
+      # Defines environment variables for specific jobs.
+      env:
+        COMMAND="sign"
+      # Use dotnet-cli to build the project
+      language: java
+      # Java version to build the project
+      jdk: 
+      - oraclejdk17
+      # Before script to run before building the project
+      before_script: 
+        # Created directories for artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+      # Script to build the project
+      script: 
+        # Docker Login If docker repositoru is private
+        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+        # Docker Pull CodeSigner Docker Image
+        - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+        # Sign artifact with CodeSigner docker image
+        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${TRAVIS_BUILD_DIR}/packages:/codesign/examples --volume ${TRAVIS_BUILD_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.jar -output_dir_path=/codesign/output
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        use:
+          - maven-jar-artifacts
+        create:
+          name: maven-signed-artifacts
+          paths:
+            # Save signed artifact
+            - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.jar
+
+    - stage: sign
+      # The job name
+      name: sign-gradle-artifacts
+      # The Ubuntu distribution to use
+      dist: bionic
+      # Use docker command for signing   
+      services:
+        - docker
+      # Defines environment variables for specific jobs.
+      env:
+        COMMAND="sign"
+      # Use dotnet-cli to build the project
+      language: java
+      # Java version to build the project
+      jdk: 
+      - oraclejdk17
+      # Before script to run before building the project
+      before_script: 
+        # Created directories for artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+      # Script to build the project
+      script: 
+        # Docker Login If docker repositoru is private
+        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+        # Docker Pull CodeSigner Docker Image
+        - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+        # Sign artifact with CodeSigner docker image
+        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${TRAVIS_BUILD_DIR}/packages:/codesign/examples --volume ${TRAVIS_BUILD_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.jar -output_dir_path=/codesign/output
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        use:
+          - gradle-jar-artifacts
+        create:
+          name: gradle-signed-artifacts
+          paths:
+            # Save signed artifact
+            - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.jar
+
+    - stage: sign
+      # The job name
+      name: sign-gradle-msi-artifacts
+      # The Ubuntu distribution to use
+      dist: bionic
+      # Use docker command for signing   
+      services:
+        - docker
+      # Defines environment variables for specific jobs.
+      env:
+        COMMAND="sign"
+      # Use dotnet-cli to build the project
+      language: java
+      # Java version to build the project
+      jdk: 
+      - oraclejdk17
+      # Before script to run before building the project
+      before_script: 
+        # Created directories for artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+      # Script to build the project
+      script: 
+        # Docker Login If docker repositoru is private
+        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+        # Docker Pull CodeSigner Docker Image
+        - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+        # Sign artifact with CodeSigner docker image
+        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${TRAVIS_BUILD_DIR}/packages:/codesign/examples --volume ${TRAVIS_BUILD_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.msi -output_dir_path=/codesign/output
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        use:
+          - gradle-msi-artifacts
+        create:
+          name: gradle-signed-msi-artifacts
+          paths:
+            # Save signed artifact
+            - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.msi
+
+    - stage: sign
+      # The job name
+      name: sign-gradle-exe-artifacts
+      # The Ubuntu distribution to use
+      dist: bionic
+      # Use docker command for signing   
+      services:
+        - docker
+      # Defines environment variables for specific jobs.
+      env:
+        COMMAND="sign"
+      # Use dotnet-cli to build the project
+      language: java
+      # Java version to build the project
+      jdk: 
+      - oraclejdk17
+      # Before script to run before building the project
+      before_script: 
+        # Created directories for artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+      # Script to build the project
+      script: 
+        # Docker Login If docker repositoru is private
+        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+        # Docker Pull CodeSigner Docker Image
+        - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+        # Sign artifact with CodeSigner docker image
+        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${TRAVIS_BUILD_DIR}/packages:/codesign/examples --volume ${TRAVIS_BUILD_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.exe -output_dir_path=/codesign/output
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        use:
+          - gradle-exe-artifacts
+        create:
+          name: gradle-signed-exe-artifacts
+          paths:
+            # Save signed artifact
+            - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.exe
+
+    - stage: sign
+      # The job name
+      name: sign-ps1-artifacts
+      # The Ubuntu distribution to use
+      dist: bionic
+      # Use docker command for signing   
+      services:
+        - docker
+      # Defines environment variables for specific jobs.
+      env:
+        COMMAND="sign"
+      # Use dotnet-cli to build the project
+      language: java
+      # Java version to build the project
+      jdk: 
+      - oraclejdk17
+      # Before script to run before building the project
+      before_script: 
+        # Created directories for artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # Copy ps1 script for signing
+        - cp powershell/${PROJECT_NAME}.ps1 ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.ps1
+      # Script to build the project
+      script: 
+        # Docker Login If docker repositoru is private
+        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
+        # Docker Pull CodeSigner Docker Image
+        - docker pull ghcr.io/bayrakmustafa/codesigner:latest
+        # Sign artifact with CodeSigner docker image
+        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${TRAVIS_BUILD_DIR}/packages:/codesign/examples --volume ${TRAVIS_BUILD_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.ps1 -output_dir_path=/codesign/output
+      # Used to specify a list of files and directories that should be attached to the job if it succeeds.
+      workspaces:
+        use:
+          - ps1-artifacts
+        create:
+          name: signed-ps1-artifacts
+          paths:
+            # Save signed artifact
+            - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.ps1
