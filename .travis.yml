@@ -378,8 +378,8 @@ jobs:
     - stage: sign
       # The job name
       name: sign-gradle-msi-artifacts
-      # The Ubuntu distribution to use
-      dist: bionic
+      # The operating system to run the job on
+      os: windows
       # Use docker command for signing   
       services:
         - docker
@@ -387,7 +387,7 @@ jobs:
       env:
         COMMAND="sign"
       # Use dotnet-cli to build the project
-      language: java
+      language: c
       # Java version to build the project
       jdk: 
       - oraclejdk17
@@ -419,8 +419,8 @@ jobs:
     - stage: sign
       # The job name
       name: sign-gradle-exe-artifacts
-      # The Ubuntu distribution to use
-      dist: bionic
+      # The operating system to run the job on
+      os: windows
       # Use docker command for signing   
       services:
         - docker
@@ -428,7 +428,7 @@ jobs:
       env:
         COMMAND="sign"
       # Use dotnet-cli to build the project
-      language: java
+      language: c
       # Java version to build the project
       jdk: 
       - oraclejdk17
