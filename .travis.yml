@@ -10,6 +10,15 @@ env:
     - TERM=dumb
     - ENVIRONMENT_NAME="TEST"
 
+# Defa
+language: java
+
+# The Ubuntu distribution to use
+dist: bionic
+
+# The Operating System to run the job on
+os: linux
+
 # Specifies the order of build stages. All jobs in one stage must complete before next stage is executed.
 stages:
   - build
@@ -184,7 +193,7 @@ jobs:
           name: gradle-exe-artifacts
           paths:
             # Save artifact in order to use signing job
-            - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
+            - packages/${PROJECT_NAME}.exe
 
     - stage: build
       # The job name
@@ -240,7 +249,7 @@ jobs:
           name: gradle-msi-artifacts
           paths:
             # Save artifact in order to use signing job
-            - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
+            - packages/${PROJECT_NAME}.msi
 
     - stage: sign
       # The job name
@@ -460,7 +469,7 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
         # Copy ps1 script for signing
-        - cp powershell/${PROJECT_NAME}.ps1 ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.ps1
+        - cp powershell/${PROJECT_NAME}.ps1 ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.ps1
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
