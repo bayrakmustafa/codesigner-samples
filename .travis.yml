@@ -273,8 +273,6 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
-        # List to be signed artifact
-        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -314,8 +312,6 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
-        # List to be signed artifact
-        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -355,8 +351,6 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
-        # List to be signed artifact
-        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -396,8 +390,6 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
-        # List to be signed artifact
-        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -437,8 +429,6 @@ jobs:
         # Created directories for artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
-        # List to be signed artifact
-        - ls -lrth ${TRAVIS_BUILD_DIR}/artifacts && ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
