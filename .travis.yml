@@ -157,8 +157,8 @@ jobs:
       # Before script to run before building the project
       before_script: 
         # Created directories for artifacts
-        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
-        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        - mkdir -p ${HOME}/artifacts
+        - mkdir -p ${HOME}/packages
         # Set GRADLE HOME for building Java project
         - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
         # Enable .NET Framework Core for building .NET project with WIX
@@ -186,14 +186,14 @@ jobs:
         # Build Gradle project for EXE artifact with jpackage
         - gradle build jpackage -x test --warning-mode all -p java -PsetupType=exe --no-daemon
         # Copy built artifacts to artifacts directory
-        - powershell.exe -ExecutionPolicy Bypass Copy-Item "java/build/release/windows/*.exe" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe"
+        - powershell.exe -ExecutionPolicy Bypass Copy-Item "java/build/release/windows/*.exe" -Destination "${HOME}/packages/${PROJECT_NAME}.exe"
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         create:
           name: gradle-exe-artifacts
           paths:
             # Save artifact in order to use signing job
-            - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
+            - ${HOME}/packages/${PROJECT_NAME}.exe
 
     - stage: build
       # The job name
@@ -213,8 +213,8 @@ jobs:
       # Before script to run before building the project
       before_script: 
         # Created directories for artifacts
-        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
-        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        - mkdir -p ${HOME}/artifacts
+        - mkdir -p ${HOME}/packages
         # Set GRADLE home for building Java project
         - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
         # Enable .NET Framework Core for building .NET project with WIX
@@ -242,14 +242,14 @@ jobs:
         # Build Gradle project for MSI artifact with jpackage
         - gradle build jpackage -x test --warning-mode all -p java -PsetupType=msi --no-daemon
         # Copy built artifacts to artifacts directory
-        - powershell.exe -ExecutionPolicy Bypass Copy-Item "java/build/release/windows/*.msi" -Destination "${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi"
+        - powershell.exe -ExecutionPolicy Bypass Copy-Item "java/build/release/windows/*.msi" -Destination "${HOME}/packages/${PROJECT_NAME}.msi"
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         create:
           name: gradle-msi-artifacts
           paths:
             # Save artifact in order to use signing job
-            - ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
+            - ${HOME}/packages/${PROJECT_NAME}.msi
 
     - stage: sign
       # The job name
@@ -372,8 +372,8 @@ jobs:
     - stage: sign
       # The job name
       name: sign-gradle-msi-artifacts
-      # The operating system to run the job on
-      os: windows
+      # The Ubuntu distribution to use
+      dist: bionic
       # Use docker command for signing   
       services:
         - docker
@@ -381,15 +381,15 @@ jobs:
       env:
         COMMAND="sign"
       # Use dotnet-cli to build the project
-      language: c
+      language: java
       # Java version to build the project
       jdk: 
       - oraclejdk17
       # Before script to run before building the project
       before_script: 
         # Created directories for artifacts
-        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
-        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        - mkdir -p ${HOME}/artifacts
+        - mkdir -p ${HOME}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -397,7 +397,7 @@ jobs:
         # Docker Pull CodeSigner Docker Image
         - docker pull ghcr.io/bayrakmustafa/codesigner:latest
         # Sign artifact with CodeSigner docker image
-        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${TRAVIS_BUILD_DIR}/packages:/codesign/examples --volume ${TRAVIS_BUILD_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.msi -output_dir_path=/codesign/output
+        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${HOME}/packages:/codesign/examples --volume ${HOME}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.msi -output_dir_path=/codesign/output
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         use:
@@ -406,13 +406,13 @@ jobs:
           name: gradle-signed-msi-artifacts
           paths:
             # Save signed artifact
-            - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.msi
+            - ${HOME}/artifacts/${PROJECT_NAME}.msi
 
     - stage: sign
       # The job name
       name: sign-gradle-exe-artifacts
-      # The operating system to run the job on
-      os: windows
+      # The Ubuntu distribution to use
+      dist: bionic
       # Use docker command for signing   
       services:
         - docker
@@ -420,15 +420,15 @@ jobs:
       env:
         COMMAND="sign"
       # Use dotnet-cli to build the project
-      language: c
+      language: java
       # Java version to build the project
       jdk: 
       - oraclejdk17
       # Before script to run before building the project
       before_script: 
         # Created directories for artifacts
-        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
-        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        - mkdir -p ${HOME}/artifacts
+        - mkdir -p ${HOME}/packages
       # Script to build the project
       script: 
         # Docker Login If docker repositoru is private
@@ -436,7 +436,7 @@ jobs:
         # Docker Pull CodeSigner Docker Image
         - docker pull ghcr.io/bayrakmustafa/codesigner:latest
         # Sign artifact with CodeSigner docker image
-        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${TRAVIS_BUILD_DIR}/packages:/codesign/examples --volume ${TRAVIS_BUILD_DIR}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.exe -output_dir_path=/codesign/output
+        - docker run -i --rm --dns 8.8.8.8 --network host --volume ${HOME}/packages:/codesign/examples --volume ${HOME}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}.exe -output_dir_path=/codesign/output
       # Used to specify a list of files and directories that should be attached to the job if it succeeds.
       workspaces:
         use:
@@ -445,7 +445,7 @@ jobs:
           name: gradle-signed-exe-artifacts
           paths:
             # Save signed artifact
-            - ${TRAVIS_BUILD_DIR}/artifacts/${PROJECT_NAME}.exe
+            - ${HOME}/artifacts/${PROJECT_NAME}.exe
 
     - stage: sign
       # The job name
