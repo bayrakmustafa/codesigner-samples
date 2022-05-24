@@ -8,6 +8,9 @@ CodeSignTool is a secure, privacy-oriented multi-platform Java command line util
 
 This action provides the sign artifacts with CodeSignTool.
 
+`ES_USERNAME`, `ES_PASSWORD`, `CRENDENTIAL_ID` and `ES_TOTP_SECRET` values to be used in CodeSignTool can be stored in the Actons Secrets area of Github.
+Detailed Information: https://docs.github.com/en/actions/secourity-guides/encrypted-secrets
+
 # Usage
 
 <!-- start usage -->
@@ -51,7 +54,7 @@ This action provides the sign artifacts with CodeSignTool.
 
 * `password`: SSL.com account password (**Required**)
 
-* `credential_id`: Credential ID for signing certificate. If credential_id is omitted and the user has only one eSigner code signing certificate, CodeSignTool will default to that. If the user has more than one code signing certificate, this parameter is mandatory.
+* `credential_id`: Credential ID for signing certificate. If credential_id is omitted and the user has only one eSigner code signing certificate, CodeSignTool will default to that. If the user has more than one code signing certificate, this parameter is mandatory. (**Required**)
 
 * `totp_secret`: OAuth TOTP Secret. You can access detailed information on https://www.ssl.com/how-to/automate-esigner-ev-code-signing (**Required**)
 
