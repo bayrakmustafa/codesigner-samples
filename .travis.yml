@@ -275,8 +275,6 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
-        # Docker Login If docker repositoru is private
-        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
         # Docker Pull CodeSigner Docker Image
         - docker pull ghcr.io/bayrakmustafa/codesigner:latest
         # Sign artifact with CodeSigner docker image
@@ -314,8 +312,6 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
-        # Docker Login If docker repositoru is private
-        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
         # Docker Pull CodeSigner Docker Image
         - docker pull ghcr.io/bayrakmustafa/codesigner:latest
         # Sign artifact with CodeSigner docker image
@@ -353,8 +349,6 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
-        # Docker Login If docker repositoru is private
-        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
         # Docker Pull CodeSigner Docker Image
         - docker pull ghcr.io/bayrakmustafa/codesigner:latest
         # Sign artifact with CodeSigner docker image
@@ -392,8 +386,6 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
-        # Docker Login If docker repositoru is private
-        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
         # Docker Pull CodeSigner Docker Image
         - docker pull ghcr.io/bayrakmustafa/codesigner:latest
         # Sign artifact with CodeSigner docker image
@@ -431,8 +423,6 @@ jobs:
         - mkdir -p ${TRAVIS_BUILD_DIR}/packages
       # Script to build the project
       script: 
-        # Docker Login If docker repositoru is private
-        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
         # Docker Pull CodeSigner Docker Image
         - docker pull ghcr.io/bayrakmustafa/codesigner:latest
         # Sign artifact with CodeSigner docker image
@@ -472,8 +462,6 @@ jobs:
         - cp powershell/${PROJECT_NAME}.ps1 ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.ps1
       # Script to build the project
       script: 
-        # Docker Login If docker repositoru is private
-        - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
         # Docker Pull CodeSigner Docker Image
         - docker pull ghcr.io/bayrakmustafa/codesigner:latest
         # Sign artifact with CodeSigner docker image

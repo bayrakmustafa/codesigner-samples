@@ -52,7 +52,6 @@ pipeline {
         // 2) Pull Codesigner Docker Image From Github Registry
         stage('Docker Pull Image') {
             steps {
-                sh 'echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin'
                 sh 'docker pull ghcr.io/bayrakmustafa/codesigner:latest'
             }
         }

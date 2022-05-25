@@ -59,7 +59,6 @@ codesigner-sign-artifact:
       - run:
           name: Docker Pull Image
           command: |
-            echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
             docker pull ghcr.io/bayrakmustafa/codesigner:latest
             docker pull alpine:3.4
 
@@ -222,7 +221,6 @@ jobs:
         - run:
             name: Docker Pull Image
             command: |
-              echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
               docker pull ghcr.io/bayrakmustafa/codesigner:latest
               docker pull alpine:3.4
 
@@ -366,7 +364,6 @@ jobs:
         - run:
             name: Docker Pull Image
             command: |
-              echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
               docker pull ghcr.io/bayrakmustafa/codesigner:latest
               docker pull alpine:3.4
 
@@ -516,7 +513,6 @@ jobs:
         - run:
             name: Docker Pull Image
             command: |
-              echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
               docker pull ghcr.io/bayrakmustafa/codesigner:latest
               docker pull alpine:3.4
 
@@ -683,7 +679,6 @@ jobs:
         - run:
             name: Docker Pull Image
             command: |
-              echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
               docker pull ghcr.io/bayrakmustafa/codesigner:latest
               docker pull alpine:3.4
 
@@ -850,7 +845,6 @@ jobs:
         - run:
             name: Docker Pull Image
             command: |
-              echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
               docker pull ghcr.io/bayrakmustafa/codesigner:latest
               docker pull alpine:3.4
 
@@ -983,7 +977,6 @@ jobs:
         - run:
             name: Docker Pull Image
             command: |
-              echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
               docker pull ghcr.io/bayrakmustafa/codesigner:latest
               docker pull alpine:3.4
 

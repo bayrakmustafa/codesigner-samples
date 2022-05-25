@@ -215,8 +215,6 @@ sign-dotnet-artifacts:
     - mkdir -p ${CI_PROJECT_DIR}/packages
   # Shell scripts executed by the Runner. Sign dotnet dll artifact with CodeSignTool Docker Image
   script:
-    # Docker Login If docker repositoru is private
-    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
     # Docker Pull CodeSigner Docker Image
     - docker pull ghcr.io/bayrakmustafa/codesigner:latest
     # Sign artifact with CodeSigner docker image
@@ -252,8 +250,6 @@ sign-maven-artifacts:
     - cp ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}-Maven.jar
   # Shell scripts executed by the Runner. Sign dotnet jar artifact with CodeSignTool Docker Image
   script:
-    # Docker Login If docker repositoru is private
-    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
     # Docker Pull CodeSigner Docker Image
     - docker pull ghcr.io/bayrakmustafa/codesigner:latest
     # Sign artifact with CodeSigner docker image
@@ -289,8 +285,6 @@ sign-gradle-artifacts:
     - cp ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.jar ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}-Gradle.jar
   # Shell scripts executed by the Runner. Sign dotnet jar artifact with CodeSignTool Docker Image
   script:
-    # Docker Login If docker repositoru is private
-    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
     # Docker Pull CodeSigner Docker Image
     - docker pull ghcr.io/bayrakmustafa/codesigner:latest
     # Sign artifact with CodeSigner docker image
@@ -324,8 +318,6 @@ sign-gradle-msi-artifacts:
     - mkdir -p ${CI_PROJECT_DIR}/packages
   # Shell scripts executed by the Runner. Sign dotnet msi artifact with CodeSignTool Docker Image
   script:
-    # Docker Login If docker repositoru is private
-    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
     # Docker Pull CodeSigner Docker Image
     - docker pull ghcr.io/bayrakmustafa/codesigner:latest
     # Sign artifact with CodeSigner docker image
@@ -359,8 +351,6 @@ sign-gradle-exe-artifacts:
     - mkdir -p ${CI_PROJECT_DIR}/packages
   # Shell scripts executed by the Runner. Sign dotnet exe artifact with CodeSignTool Docker Image
   script:
-    # Docker Login If docker repositoru is private
-    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
     # Docker Pull CodeSigner Docker Image
     - docker pull ghcr.io/bayrakmustafa/codesigner:latest
     # Sign artifact with CodeSigner docker image
@@ -396,8 +386,6 @@ sign-ps1-artifacts:
     - cp powershell/${PROJECT_NAME}.ps1 ${CI_PROJECT_DIR}/packages/${PROJECT_NAME}.ps1
   # Shell scripts executed by the Runner. Sign dotnet ps1 artifact with CodeSignTool Docker Image
   script:
-    # Docker Login If docker repositoru is private
-    - echo ${REGISTRY_PASSWORD} | docker login ghcr.io -u ${REGISTRY_USERNAME} --password-stdin
     # Docker Pull CodeSigner Docker Image
     - docker pull ghcr.io/bayrakmustafa/codesigner:latest
     # Sign artifact with CodeSigner docker image
