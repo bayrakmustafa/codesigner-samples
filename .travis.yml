@@ -147,7 +147,7 @@ jobs:
       # Use docker command for signing   
       services:
         - docker
-      # Use default c lang
+      # Use default generic lang
       language: c
       # Cache gradle directory in order to speed up
       cache:
@@ -157,9 +157,9 @@ jobs:
       # Before script to run before building the project
       before_script: 
         # Created directories for artifacts
-        - mkdir -p ${HOME}/artifacts
-        - mkdir -p ${HOME}/packages
-        # Set GRADLE HOME for building Java project
+        - mkdir -p ${TRAVIS_BUILD_DIR}/artifacts
+        - mkdir -p ${TRAVIS_BUILD_DIR}/packages
+        # Set GRADLE home for building Java project
         - export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4"
         # Enable .NET Framework Core for building .NET project with WIX
         - powershell.exe -ExecutionPolicy Bypass Install-WindowsFeature Net-Framework-Core
