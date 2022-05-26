@@ -387,8 +387,8 @@ jobs:
         # Defines environment variables locally
         - export TRAVIS_REPO_OWNER=${TRAVIS_REPO_SLUG%/*}
         - export TRAVIS_REPO_NAME=${TRAVIS_REPO_SLUG#*/}
-        # Copy artifact to artifacts directory
-        - cp ~/C:/Users/travis/build/${TRAVIS_REPO_OWNER}/${TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.msi ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
+        # Copy artifact to artifacts directory (https://travis-ci.community/t/workspaces-do-not-work-nicely-with-cross-platform-builds/4461/3)
+        - cp ${TRAVIS_BUILD_DIR}/C:/Users/travis/build/${TRAVIS_REPO_OWNER}/${TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.msi ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
       # Script to build the project
       script: 
         # Docker Pull CodeSigner Docker Image
@@ -429,8 +429,8 @@ jobs:
         # Defines environment variables locally
         - export TRAVIS_REPO_OWNER=${TRAVIS_REPO_SLUG%/*}
         - export TRAVIS_REPO_NAME=${TRAVIS_REPO_SLUG#*/}
-        # Copy artifact to artifacts directory
-        - cp ~/C:/Users/travis/build/${TRAVIS_REPO_OWNER}/${TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.exe ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
+        # Copy artifact to artifacts directory (https://travis-ci.community/t/workspaces-do-not-work-nicely-with-cross-platform-builds/4461/3)
+        - cp ${TRAVIS_BUILD_DIR}/C:/Users/travis/build/${TRAVIS_REPO_OWNER}/${TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.exe ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
       # Script to build the project
       script: 
         # Docker Pull CodeSigner Docker Image
