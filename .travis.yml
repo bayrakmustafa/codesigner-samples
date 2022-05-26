@@ -108,7 +108,7 @@ jobs:
         - export TRAVIS_REPO_NAME=${TRAVIS_REPO_SLUG#*/}
         # Copy artifact to artifacts directory
         - find ${TRAVIS_BUILD_DIR} -iname ${PROJECT_NAME}.exe
-        - cp ~/C:/Users/travis/build/${TRAVIS_REPO_OWNER}/${TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.exe ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
+        - cp ${TRAVIS_BUILD_DIR}/C:/Users/travis/build/${TRAVIS_REPO_OWNER}/${TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.exe ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
       # Script to build the project
       script: 
         # Docker Pull CodeSigner Docker Image
