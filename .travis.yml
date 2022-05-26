@@ -388,7 +388,7 @@ jobs:
         - export TRAVIS_REPO_OWNER=${TRAVIS_REPO_SLUG%/*}
         - export TRAVIS_REPO_NAME=${TRAVIS_REPO_SLUG#*/}
         # Copy artifact to artifacts directory
-        - cp ~/C:/Users/travis/build/{TRAVIS_REPO_OWNER}/{TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.msi ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
+        - cp ~/C:/Users/travis/build/${TRAVIS_REPO_OWNER}/${TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.msi ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.msi
       # Script to build the project
       script: 
         # Docker Pull CodeSigner Docker Image
@@ -430,7 +430,7 @@ jobs:
         - export TRAVIS_REPO_OWNER=${TRAVIS_REPO_SLUG%/*}
         - export TRAVIS_REPO_NAME=${TRAVIS_REPO_SLUG#*/}
         # Copy artifact to artifacts directory
-        - cp ~/C:/Users/travis/build/{TRAVIS_REPO_OWNER}/{TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.exe ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
+        - cp ~/C:/Users/travis/build/${TRAVIS_REPO_OWNER}/${TRAVIS_REPO_NAME}/packages/${PROJECT_NAME}.exe ${TRAVIS_BUILD_DIR}/packages/${PROJECT_NAME}.exe
       # Script to build the project
       script: 
         # Docker Pull CodeSigner Docker Image
