@@ -128,7 +128,7 @@ pipeline {
             }
         }
     
-        // 8) This is the step PS1 file will be signed with CodeSignTool.
+        // 8) This is the step where the created JAR (artifact) files will be signed with CodeSignTool.
         stage('Sign and Save Gradle JAR Artifact') {
             steps {
                 sh 'docker run -i --rm --dns 8.8.8.8 --network host --volume ${WORKSPACE}/packages:/codesign/examples --volume ${WORKSPACE}/artifacts:/codesign/output -e USERNAME=${USERNAME} -e PASSWORD=${PASSWORD} -e CREDENTIAL_ID=${CREDENTIAL_ID} -e TOTP_SECRET=${TOTP_SECRET} -e ENVIRONMENT_NAME=${ENVIRONMENT_NAME} ghcr.io/bayrakmustafa/codesigner:latest ${COMMAND} -input_file_path=/codesign/examples/${PROJECT_NAME}-Gradle.jar -output_dir_path=/codesign/output'
